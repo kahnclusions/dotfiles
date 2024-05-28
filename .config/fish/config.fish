@@ -13,6 +13,7 @@ fish_add_path -m $HOME/.cargo/bin
 fish_add_path -m ~/.local/bin
 fish_add_path -m $ANDROID_HOME/tools
 fish_add_path -m $ANDROID_HOME/platform-tools
+fish_add_path -m $HOME/workspace/flutter/bin
 
 if status is-interactive
     starship init fish | source
@@ -74,3 +75,4 @@ else
 end
 # <<< conda initialize <<<
 
+rvm default

@@ -8,6 +8,19 @@ return {
    "AstroNvim/astrolsp",
    ---@type AstroLSPOpts
    opts = {
+      servers = { "sourcekit" },
+      config = {
+         tsserver = { enabled = false },
+         ["rust_analyzer"] = {
+            settings = {
+               ["rust-analyzer"] = {
+                  cargo = {
+                     features = { "ssr" }, -- features = ssr, for LSP support in leptos SSR functions
+                  },
+               },
+            },
+         },
+      },
       -- customize lsp formatting options
       formatting = {
          -- control auto formatting on save
@@ -15,10 +28,10 @@ return {
             ignore_filetypes = { -- disable format on save for specified filetypes
                "typescript",
                "typescriptreact",
-               -- "python",
             },
          },
          disabled = { -- disable formatting capabilities for the listed language servers
+            "tsserver",
             "typescript-tools",
             -- disable lua_ls formatting capability if you want to use StyLua to format your lua code
             -- "lua_ls",

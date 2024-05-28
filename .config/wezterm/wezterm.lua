@@ -1,4 +1,6 @@
 local wezterm = require("wezterm")
+local rose_pine = require("themes.rose-pine.rose-pine")
+local rose_pine_dawn = require("themes.rose-pine.rose-pine-dawn")
 
 local mykeys = {
 	{ key = "-", mods = "LEADER", action = wezterm.action({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
@@ -32,9 +34,9 @@ end
 
 local function scheme_for_appearance(appearance)
 	if appearance:find("Dark") then
-		return "Tokyo Night Storm"
+		return "rose_pine"
 	else
-		return "Tokyo Night Storm"
+		return "rose_pine_dawn"
 	end
 end
 
@@ -44,9 +46,13 @@ return {
 		"Symbols Nerd Font",
 	}),
 	font_size = 18.0,
-	force_reverse_video_cursor = true,
+	force_reverse_video_cursor = false,
 	debug_key_events = true,
-	-- colors = colors,
+	-- colors = rose_pine_dawn.colors(),
+	color_schemes = {
+		rose_pine = rose_pine.colors(),
+		rose_pine_dawn = rose_pine_dawn.colors(),
+	},
 	color_scheme = scheme_for_appearance(get_appearance()),
 
 	window_decorations = "RESIZE",
