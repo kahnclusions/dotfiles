@@ -14,8 +14,11 @@ return {
          ["rust_analyzer"] = {
             settings = {
                ["rust-analyzer"] = {
+                  diagnostics = {
+                     disabled = { "unresolved-proc-macro" },
+                  },
                   cargo = {
-                     features = { "ssr" }, -- features = ssr, for LSP support in leptos SSR functions
+                     -- features = { "ssr" }, -- features = ssr, for LSP support in leptos SSR functions
                   },
                },
             },
