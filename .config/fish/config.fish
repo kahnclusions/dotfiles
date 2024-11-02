@@ -58,8 +58,10 @@ set system_theme (defaults read -g AppleInterfaceStyle 2> /dev/null)
 
 if [ "$system_theme" = "Dark" ];
   set -U macOS_Theme "dark"
+    # fish_config theme save "Catppuccin Mocha"
 else;
   set -U macOS_Theme "light"
+    # fish_config theme save "Catppuccin Latte"
 end
 
 # >>> conda initialize >>>

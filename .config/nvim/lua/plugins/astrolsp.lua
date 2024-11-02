@@ -11,17 +11,8 @@ return {
       servers = { "sourcekit" },
       config = {
          tsserver = { enabled = false },
-         ["rust_analyzer"] = {
-            settings = {
-               ["rust-analyzer"] = {
-                  diagnostics = {
-                     disabled = { "unresolved-proc-macro" },
-                  },
-                  cargo = {
-                     -- features = { "ssr" }, -- features = ssr, for LSP support in leptos SSR functions
-                  },
-               },
-            },
+         tailwindcss = {
+            filetypes = { "rust" },
          },
       },
       -- customize lsp formatting options
@@ -29,8 +20,8 @@ return {
          -- control auto formatting on save
          format_on_save = {
             ignore_filetypes = { -- disable format on save for specified filetypes
-               "typescript",
                "typescriptreact",
+               "typescript",
             },
          },
          disabled = { -- disable formatting capabilities for the listed language servers

@@ -34,15 +34,20 @@ end
 
 local function scheme_for_appearance(appearance)
 	if appearance:find("Dark") then
-		return "rose_pine"
+		return "Tokyo Night"
 	else
-		return "rose_pine_dawn"
+		return "Tokyo Night Day"
 	end
 end
 
 return {
 	font = wezterm.font_with_fallback({
-		"Iosevka Slab",
+		"Iosevka Custom",
+		-- { family = "Iosevka", harfbuzz_features = { "calt", "dlig" } },
+		-- "Iosvmata",
+		-- "Pragmasevka",
+		-- "Input Mono Condensed",
+		-- "PragmataPro",
 		"Symbols Nerd Font",
 	}),
 	font_size = 18.0,
