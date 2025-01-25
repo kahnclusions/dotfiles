@@ -6,11 +6,34 @@
 ---@type LazySpec
 return {
    "AstroNvim/astrolsp",
+   init = function()
+      for _, method in ipairs({ "textDocument/diagnostic", "workspace/diagnostic" }) do
+         local default_diagnostic_handler = vim.lsp.handlers[method]
+         vim.lsp.handlers[method] = function(err, result, context, config)
+            if err ~= nil and err.code == -32802 then
+               return
+            end
+            return default_diagnostic_handler(err, result, context, config)
+         end
+      end
+   end,
    ---@type AstroLSPOpts
    opts = {
       servers = { "sourcekit" },
       config = {
          tsserver = { enabled = false },
+         ["rust_analyzer"] = {
+            settings = {
+               ["rust-analyzer"] = {
+                  cargo = {
+                     check = { command = "check", extraArgs = {} },
+                     extraEnv = { CARGO_PROFILE_RUST_ANALYZER_INHERITS = "dev" },
+                     extraArgs = { "--profile", "rust-analyzer" },
+                     -- features = { "hydrate", "csr" }, -- features = ssr, for LSP support in leptos SSR functions
+                  },
+               },
+            },
+         },
          tailwindcss = {
             filetypes = { "rust" },
          },

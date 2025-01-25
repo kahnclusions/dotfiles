@@ -1,6 +1,4 @@
 local wezterm = require("wezterm")
-local rose_pine = require("themes.rose-pine.rose-pine")
-local rose_pine_dawn = require("themes.rose-pine.rose-pine-dawn")
 
 local mykeys = {
 	{ key = "-", mods = "LEADER", action = wezterm.action({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
@@ -34,32 +32,21 @@ end
 
 local function scheme_for_appearance(appearance)
 	if appearance:find("Dark") then
-		return "Tokyo Night"
+		return require("themes.rose-pine.rose-pine").colors()
 	else
-		return "Tokyo Night Day"
+		return require("themes.rose-pine.rose-pine-dawn").colors()
 	end
 end
 
 return {
 	font = wezterm.font_with_fallback({
-		"Iosevka Custom",
-		-- { family = "Iosevka", harfbuzz_features = { "calt", "dlig" } },
-		-- "Iosvmata",
-		-- "Pragmasevka",
-		-- "Input Mono Condensed",
-		-- "PragmataPro",
+		"Pragmasevka",
 		"Symbols Nerd Font",
 	}),
-	font_size = 18.0,
+	font_size = 16.0,
 	force_reverse_video_cursor = false,
 	debug_key_events = true,
-	-- colors = rose_pine_dawn.colors(),
-	color_schemes = {
-		rose_pine = rose_pine.colors(),
-		rose_pine_dawn = rose_pine_dawn.colors(),
-	},
-	color_scheme = scheme_for_appearance(get_appearance()),
-
+	colors = scheme_for_appearance(get_appearance()),
 	window_decorations = "RESIZE",
 	window_padding = {
 		left = 0,
@@ -78,6 +65,6 @@ return {
 	-- Keyboard mapping
 	leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 },
 	keys = mykeys,
-	window_background_opacity = 1,
-	macos_window_background_blur = 30,
+	-- window_background_opacity = 1,
+	-- macos_window_background_blur = 30,
 }
