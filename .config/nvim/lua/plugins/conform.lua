@@ -21,9 +21,9 @@ return {
       formatters_by_ft = {
          lua = { "stylua" },
          python = { "isort", "black" },
-         javascript = { { "prettierd", "prettier" } },
-         typescript = { { "prettierd", "prettier" } },
-         typescriptreact = { { "prettierd", "prettier" } },
+         javascript = { "prettierd", "prettier" },
+         typescript = { "prettierd", "prettier" },
+         typescriptreact = { "prettierd", "prettier" },
          swift = { "swiftformat" },
       },
       -- Set up format-on-save

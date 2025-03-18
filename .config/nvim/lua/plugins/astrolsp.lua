@@ -24,6 +24,16 @@ return {
          tsserver = { enabled = false },
          ["rust_analyzer"] = {
             settings = {
+               -- Other Settings ...
+               procMacro = {
+                  ignored = {
+                     leptos_macro = {
+                        -- optional: --
+                        -- "component",
+                        "server",
+                     },
+                  },
+               },
                ["rust-analyzer"] = {
                   cargo = {
                      check = { command = "check", extraArgs = {} },
