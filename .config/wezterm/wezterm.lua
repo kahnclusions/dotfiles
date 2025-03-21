@@ -1,18 +1,19 @@
 local wezterm = require("wezterm")
+local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
 
 local mykeys = {
-	{ key = "-", mods = "LEADER", action = wezterm.action({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
+	{ key = "-",   mods = "LEADER",     action = wezterm.action({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
 	{
 		key = "\\",
 		mods = "LEADER",
 		action = wezterm.action({ SplitHorizontal = { domain = "CurrentPaneDomain" } }),
 	},
-	{ key = "z", mods = "LEADER", action = "TogglePaneZoomState" },
-	{ key = "c", mods = "LEADER", action = wezterm.action({ SpawnTab = "CurrentPaneDomain" }) },
-	{ key = "Tab", mods = "CTRL", action = wezterm.action({ ActivateTabRelative = 1 }) },
+	{ key = "z",   mods = "LEADER",     action = "TogglePaneZoomState" },
+	{ key = "c",   mods = "LEADER",     action = wezterm.action({ SpawnTab = "CurrentPaneDomain" }) },
+	{ key = "Tab", mods = "CTRL",       action = wezterm.action({ ActivateTabRelative = 1 }) },
 	{ key = "Tab", mods = "SHIFT|CTRL", action = wezterm.action({ ActivateTabRelative = -1 }) },
-	{ key = "n", mods = "LEADER", action = wezterm.action({ ActivateTabRelative = 1 }) },
-	{ key = "p", mods = "LEADER", action = wezterm.action({ ActivateTabRelative = -1 }) },
+	{ key = "n",   mods = "LEADER",     action = wezterm.action({ ActivateTabRelative = 1 }) },
+	{ key = "p",   mods = "LEADER",     action = wezterm.action({ ActivateTabRelative = -1 }) },
 }
 
 for i = 1, 8 do
@@ -32,9 +33,11 @@ end
 
 local function scheme_for_appearance(appearance)
 	if appearance:find("Dark") then
-		return require("themes.rose-pine.rose-pine").colors()
+		return "kanagawa-paper-ink"
+		-- return require("themes.rose-pine.rose-pine").colors()
 	else
-		return require("themes.rose-pine.rose-pine-dawn").colors()
+		return "kanagawa-paper-canvas"
+		-- return require("themes.rose-pine.rose-pine-dawn").colors()
 	end
 end
 
@@ -46,7 +49,7 @@ return {
 	font_size = 16.0,
 	force_reverse_video_cursor = false,
 	debug_key_events = true,
-	colors = scheme_for_appearance(get_appearance()),
+	color_scheme = scheme_for_appearance(get_appearance()),
 	window_decorations = "RESIZE",
 	window_padding = {
 		left = 0,
