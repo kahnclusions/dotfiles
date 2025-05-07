@@ -1,0 +1,86 @@
+[metadata]
+name = "gruvbox-night"
+author = "kahnclusions"
+origin_url = "https://github.com/kahnclusions/gruvbox.nvim"
+
+[colors]
+foreground = "#fbf1c7"
+background = "#282828"
+cursor_bg = "#ebdbb2"
+cursor_border = "#ebdbb2"
+cursor_fg = "#282828"
+compose_cursor = '#955f61'
+selection_bg = "#3c3837"
+selection_fg = "#ebdbb2"
+scrollbar_thumb = "#824d5b"
+split = "#e4dcd4"
+visual_bell = "#3d2b5a"
+ansi = [
+        "#282828",
+        "#cc241d",
+        "#98971a",
+        "#d79921",
+        "#458588",
+        "#b16286",
+        "#689d6a",
+        "#7c6f64"
+      ]
+brights = [
+        "#928374",
+        "#fb4934",
+        "#b8bb26",
+        "#fabd2f",
+        "#93a598",
+        "#d3869b",
+        "#9ec07c",
+        "#ebdbb2"
+]
+
+# [colors.indexed]
+# 16 = "#a440b5"
+# 17 = "#955f61"
+
+[colors.tab_bar]
+background = "#282828"
+inactive_tab_edge = "#e4dcd4"
+inactive_tab_edge_hover = "#dbd1dd"
+
+[colors.tab_bar.active_tab]
+bg_color = "#83a598"
+fg_color = "#282828"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[colors.tab_bar.inactive_tab]
+bg_color = "#282828"
+fg_color = "#928374"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[colors.tab_bar.inactive_tab_hover]
+bg_color = "#282828"
+fg_color = "#928374"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[colors.tab_bar.new_tab]
+bg_color = "#282828"
+fg_color = "#928374"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"
+
+[colors.tab_bar.new_tab_hover]
+bg_color = "#8ec07c"
+fg_color = "#282828"
+intensity = "Normal"
+italic = false
+strikethrough = false
+underline = "None"

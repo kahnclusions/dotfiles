@@ -1,5 +1,4 @@
 local wezterm = require("wezterm")
-local tabline = wezterm.plugin.require("https://github.com/michaelbrusegard/tabline.wez")
 
 local mykeys = {
 	{ key = "-",   mods = "LEADER",     action = wezterm.action({ SplitVertical = { domain = "CurrentPaneDomain" } }) },
@@ -33,10 +32,10 @@ end
 
 local function scheme_for_appearance(appearance)
 	if appearance:find("Dark") then
-		return "kanagawa-paper-ink"
+		return "gruvbox-night"
 		-- return require("themes.rose-pine.rose-pine").colors()
 	else
-		return "kanagawa-paper-canvas"
+		return "gruvbox-light"
 		-- return require("themes.rose-pine.rose-pine-dawn").colors()
 	end
 end
