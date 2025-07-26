@@ -36,13 +36,13 @@ alias dots="cd $DOTFILES"
 # set -gx PATH "$PNPM_HOME" $PATH
 # pnpm end
 
-# function update_theme --on-variable macOS_Theme
-#     if [ "$macOS_Theme" = "dark" ]
-#         # source "$HOME/.config/fish/themes/Zenbones Dark.fish"
-#     else if [ "$macOS_Theme" = "light" ]
-#         # source "$HOME/.config/fish/themes/Kanagawa_Lotus.fish"
-#     end
-# end
+function update_theme --on-variable macOS_Theme
+    if [ "$macOS_Theme" = "dark" ]
+        source "$HOME/.config/fish/themes/Kanagawa_Wave.fish"
+    else if [ "$macOS_Theme" = "light" ]
+        source "$HOME/.config/fish/themes/Kanagawa_Lotus.fish"
+    end
+end
 
 # set -Ux FZF_DEFAULT_OPTS "$FZF_DEFAULT_OPTS \
 #     --color=fg:#c0caf5,bg:#24283b,hl:#ff9e64 \
@@ -78,3 +78,5 @@ alias dots="cd $DOTFILES"
 if test (uname) = Darwin
     fish_add_path --prepend --global "$HOME/.nix-profile/bin" /nix/var/nix/profiles/default/bin /run/current-system/sw/bin
 end
+
+set -q GHCUP_INSTALL_BASE_PREFIX[1]; or set GHCUP_INSTALL_BASE_PREFIX $HOME ; set -gx PATH $HOME/.cabal/bin /Users/ck/.ghcup/bin $PATH # ghcup-env

@@ -1,6 +1,7 @@
 [user]
 	email = 92762809+kahnclusions@users.noreply.github.com
 	name = Christopher Kahn
+	signingkey = /Users/ck/.ssh/id_ed25519.pub
 [pull]
 	rebase = false
 [init]
@@ -11,3 +12,7 @@
 	helper = osxkeychain
 [includeIf "gitdir:~/workspace/"]
   path = ~/workspace/.gitconfig_include
+[gpg]
+	format = ssh
+[commit]
+	gpgsign = true
