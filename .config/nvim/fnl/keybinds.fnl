@@ -15,12 +15,16 @@
 (map "n" "<leader>fo" (fn [] (let [ex (require :mini.extra)] (ex.pickers.oldfiles { :current_dir true }))) { :desc "Old files" })
 
 ;; File Explorer
-(map "n" "fe" (fn []
+(map "n" "fc" (fn []
    (local buffer-name (vim.api.nvim_buf_get_name 0))
    (local mini-files (require :mini.files))
    (if (or (= buffer-name "") (string.match buffer-name "Starter"))
       (mini-files.open (vim.loop.cwd))
       (mini-files.open (vim.api.nvim_buf_get_name 0)))))
+
+(map "n" "fe" (fn []
+   (local mini-files (require :mini.files))
+      (mini-files.open)))
 
 ;; LSP
 (map "n" "<leader>ld" (fn [] (vim.lsp.buf.definition)) { :desc "Go to definition" } )
