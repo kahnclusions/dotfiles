@@ -1,4 +1,5 @@
-;; kickstart.fnl
+;; Kickstart.fnl
+;; easy to use neovim config in a single Fennel file
 
 ;; Set the `vim` global for Fennel.
 (local vim (. _G :vim))
@@ -73,6 +74,7 @@
    ; Escape key clears search highlights
    (vim.keymap.set "n" "<Esc>" "<cmd>nohlsearch<CR>")))
 
+
 ;; Mini.basics
 (later (fn []
     ((. (require :mini.basics) :setup) {
@@ -106,17 +108,19 @@
 
 
 ;; Mini.nvim plugins
-(later (fn [] (. (require :mini.bracketed)   :setup)))
-(later (fn [] (. (require :mini.bufremove)   :setup)))
-(later (fn [] (. (require :mini.colors)      :setup)))
-(later (fn [] (. (require :mini.comment)     :setup)))
-(later (fn [] (. (require :mini.icons)       :setup)))
-(later (fn [] (. (require :mini.fuzzy)       :setup)))
-(later (fn [] (. (require :mini.misc)        :setup)))
-(later (fn [] (. (require :mini.surround)    :setup)))
-(later (fn [] (. (require :mini.trailspace)  :setup)))
-(later (fn [] (. (require :mini.extra)       :setup)))
-(later (fn [] (. (require :mini.visits)      :setup)))
+(later (fn [] (. (require :mini.ai)          :setup))) ; Better around/inside text objects
+(later (fn [] (. (require :mini.bracketed)   :setup))) ; Movement using ][
+(later (fn [] (. (require :mini.bufremove)   :setup))) ; Remove buffers after a while
+(later (fn [] (. (require :mini.colors)      :setup))) ; 
+(later (fn [] (. (require :mini.comment)     :setup))) ; 
+(later (fn [] (. (require :mini.icons)       :setup))) ; Various icons
+(later (fn [] (. (require :mini.fuzzy)       :setup))) ; Fuzzy search
+(later (fn [] (. (require :mini.misc)        :setup))) ; Miscellanous configuration
+(later (fn [] (. (require :mini.surround)    :setup))) ; vim-surround alternative
+(later (fn [] (. (require :mini.trailspace)  :setup))) ; Trailing spaces
+(later (fn [] (. (require :mini.extra)       :setup))) ; Extras
+(later (fn [] (. (require :mini.visits)      :setup))) ; Frecency tracking
+(later (fn [] (. (require :mini.diff)        :setup))) ; Diff viewer
 
 
 ;; Tree-sitter
@@ -272,18 +276,34 @@
 
 ;; Diagnostics
 (vim.diagnostic.config {
-  :signs {
-    :text {
-      vim.diagnostic.severity.ERROR ""
-      vim.diagnostic.severity.WARN ""
-      vim.diagnostic.severity.INFO ""
-      vim.diagnostic.severity.HINT ""
-    }
-  }
+   :severity_sort true
+   :float { :border "rounded" :source "if_many" }
+   :underline { :severity vim.diagnostic.severity.ERROR }
+   :signs {
+      :text {
+         vim.diagnostic.severity.ERROR ""
+         vim.diagnostic.severity.WARN ""
+         vim.diagnostic.severity.INFO ""
+         vim.diagnostic.severity.HINT ""
+      }
+   }
+   :virtual_text {
+      :source "if_many"
+      :spacing 2
+      :format (lambda [diagnostic]
+        (let [diagnostic_message {
+          [vim.diagnostic.severity.ERROR] diagnostic.message
+          [vim.diagnostic.severity.WARN] diagnostic.message
+          [vim.diagnostic.severity.INFO] diagnostic.message
+          [vim.diagnostic.severity.HINT] diagnostic.message
+        }]
+        (. diagnostic_message diagnostic.severity)
+      ))
+   }
 })
 
 
-;; Completion
+;; Completion using blink.cmp
 (later (fn []
    (add { :source "https://github.com/saghen/blink.cmp" })
    (let [blink-cmp (require :blink.cmp)]
@@ -300,12 +320,85 @@
    }))))
 
 
-; (now (fn [] 
-;    (add { :source "nvim-lualine/lualine.nvim" })
-;    ((. (require :lualine) :setup) { :options { :theme "kanso" } })
-;    ))
+;; Highlight when yanking text
+(vim.api.nvim_create_autocmd "TextYankPost" {
+  :desc "Highlight when yanking (copying) text"
+  :group (vim.api.nvim_create_augroup "kickstart-highlight-yank" { :clear true })
+  :callback (lambda [] (vim.hl.on_yank { :timeout 500 } ))
+})
+
+;; Statusline
+(now (fn []
+   (let [statusline (require :mini.statusline)]
+      (statusline.setup {
+        :content {
+            :active (fn []
+               (local MiniStatusline (. _G :MiniStatusline))
+               (let [(mode mode-hl) (MiniStatusline.section_mode { :trunc_width 120 })
+                     diff          (MiniStatusline.section_diff { :trunc_width 75 })
+                     diagnostics   (MiniStatusline.section_diagnostics { :trunc_width 75 })
+                     lsp           (MiniStatusline.section_lsp { :trunc_width 75 })
+                     git           (MiniStatusline.section_git { :trunc_width 40 })
+                     filename      (MiniStatusline.section_filename { :trunc_width 140 })
+                     fileinfo      (MiniStatusline.section_fileinfo { :trunc_width 120 })
+                     search        (MiniStatusline.section_searchcount { :trunc_width 75 })
+                     location      (MiniStatusline.section_location { :trunc_width  1000 })
+                ]
+
+                (MiniStatusline.combine_groups [
+                    { :hl mode-hl                 :strings [ mode ] }
+                    { :hl "MiniStatuslineDevinfo" :strings [ git diff diagnostics lsp ]}
+                    "%<" 
+                    { :hl "MiniStatuslineFilename" :strings [ filename ] }
+                    "%=" 
+                    { :hl "MiniStatuslineFileinfo" :strings [ fileinfo ] }
+                    { :hl mode-hl                  :strings [ search location ] }
+                ])))
+            :inactive nil
+        }})
+      (set statusline.section_location (fn [] "%2l:%-2v")))))
 
 
-;; Imports
-(require :keybinds)
-(require :status)
+(now (fn []
+   (local map vim.keymap.set)
+
+   ;; How to escape
+   (map "n" "<leader>q" "<cmd>wqa<cr>" { :desc "Quit" })
+
+   ;; Finding files
+   (map "n" "<leader>ff" (fn [] (let [pick (require :mini.pick)] (pick.builtin.files))) { :desc "Find files" } )
+   (map "n" "<leader>f<enter>" (fn [] (let [pick (require :mini.pick)] (pick.builtin.resume))) { :desc "Resume" } )
+   (map "n" "<leader><space>" (fn [] (let [pick (require :mini.pick)] (pick.builtin.grep_live))) { :desc "Find String" } )
+   (map "n" "<leader>fb" (fn [] (let [pick (require :mini.pick)] (pick.builtin.buffers))) { :desc "Find Buffer" } )
+   (map "n" "<leader>fw" (fn [] (let [pick (require :mini.pick) word (vim.fn.expand "<cword>")] 
+      (pick.builtin.grep { :pattern word }))) { :desc "Find Buffer" } )
+   (map "n" "," (fn [] (let [extra (require :mini.extra)] (extra.pickers.buf_lines { :scope "current" }))) { :desc "Find Lines" } )
+   (map "n" "<leader>fo" (fn [] (let [ex (require :mini.extra)] (ex.pickers.oldfiles { :current_dir true }))) { :desc "Old files" })
+
+   ;; File Explorer
+   (map "n" "fc" (fn []
+      (local buffer-name (vim.api.nvim_buf_get_name 0))
+      (local mini-files (require :mini.files))
+      (if (or (= buffer-name "") (string.match buffer-name "Starter"))
+         (mini-files.open (vim.loop.cwd))
+         (mini-files.open (vim.api.nvim_buf_get_name 0)))))
+
+   (map "n" "fe" (fn []
+      (local mini-files (require :mini.files))
+         (mini-files.open)))
+
+   ;; LSP
+   (map "n" "<leader>ld" (fn [] (vim.lsp.buf.definition)) { :desc "Go to definition" } )
+   (map "n" "<leader>lr" (fn [] (vim.lsp.buf.rename)) { :desc "Rename" } )
+   (map "n" "<leader>la" (fn [] (vim.lsp.buf.code_action)) { :desc "Code actions" } )
+   (map "n" "<leader>le" (fn [] (let [extra (require :mini.extra)] (extra.pickers.diagnostic { :scope "current" })) ) { :desc "LSP Errors" } )
+   (map "n" "gd" (fn [] (vim.lsp.buf.definition)) { :desc "Go to definition" } )
+   (map "n" "<leader>lh" (fn [] (vim.lsp.buf.signature_help)) { :desc "Signature help" })
+
+   ;; LSP Go-to Pickers
+   (map "n" "grr" (fn [] (let [ex (require :mini.extra)] (ex.pickers.lsp { :scope "references" }))) { :desc "Go to references" })
+   (map "n" "gri" (fn [] (let [ex (require :mini.extra)] (ex.pickers.lsp { :scope "implementation" }))) { :desc "Go to implementations" })
+
+   ;; I'm not sure what this does?
+   (map "n" "<leader>fr" (fn [] (let [ex (require :mini.extra)] (ex.pickers.visit_paths))) { :desc "Visit paths" })))
+
