@@ -30,7 +30,7 @@
 
 
 ;; Basic Neovim configuration, runs immediately
-(now (fn [] 
+(now (fn []
    ; Leader key
    (set vim.g.mapleader " ")
 
@@ -102,7 +102,7 @@
    ((. (require :auto-dark-mode) :setup) {:update_interval 2000})))
 
 ;; Extra colour schemes - load later
-(later (fn [] 
+(later (fn []
    (add { :source "zenbones-theme/zenbones.nvim" :depends ["rktjmp/lush.nvim"] })
    ))
 
@@ -111,8 +111,8 @@
 (later (fn [] (. (require :mini.ai)          :setup))) ; Better around/inside text objects
 (later (fn [] (. (require :mini.bracketed)   :setup))) ; Movement using ][
 (later (fn [] (. (require :mini.bufremove)   :setup))) ; Remove buffers after a while
-(later (fn [] (. (require :mini.colors)      :setup))) ; 
-(later (fn [] (. (require :mini.comment)     :setup))) ; 
+(later (fn [] (. (require :mini.colors)      :setup))) ;
+(later (fn [] (. (require :mini.comment)     :setup))) ;
 (later (fn [] (. (require :mini.icons)       :setup))) ; Various icons
 (later (fn [] (. (require :mini.fuzzy)       :setup))) ; Fuzzy search
 (later (fn [] (. (require :mini.misc)        :setup))) ; Miscellanous configuration
@@ -123,10 +123,27 @@
 (later (fn [] (. (require :mini.diff)        :setup))) ; Diff viewer
 
 
+; mini-move - Move selections around
+(later (fn [] (let [move (require :mini.move)]
+   move.setup {
+      :mappings {
+         :left   "<S-left>"
+         :right  "<S-right>"
+         :down   "<S-down>"
+         :up     "<S-up>"
+
+         :line_left   "<S-left>"
+         :line_right  "<S-right>"
+         :line_down   "<S-down>"
+         :line_up     "<S-up>"
+      }
+   })))
+
+
 ;; Tree-sitter
-(later (fn [] 
-   (add { :source "https://github.com/nvim-treesitter/nvim-treesitter" 
-         :checkout "master" 
+(later (fn []
+   (add { :source "https://github.com/nvim-treesitter/nvim-treesitter"
+         :checkout "master"
          :monitor "master" })
    (local ts-parsers [
       "bash"
@@ -157,7 +174,7 @@
       "vim"
       "yaml"
    ])
-   (now (fn [] 
+   (now (fn []
       (local nts (require :nvim-treesitter.configs))
       (nts.setup {
                :ensure_installed ts-parsers
@@ -170,81 +187,16 @@
       :hex_color (hi.gen_highlighter.hex_color)
       }))))
 
-(now (fn [] 
+(now (fn []
    (let [is (require :mini.indentscope)]
-      (is.setup { 
+      (is.setup {
          :draw { :delay 0 :animation (is.gen_animation.none) }
          :symbol "╎" }))))
 ;(later (fn [] (. (require :mini.cursorword)  :setup)))
-; (now (fn [] 
+; (now (fn []
 ;    (add { :source "https://github.com/saghen/blink.indent" })
 ;    ((. (require :blink.indent) :setup) {})))
 
-;; Mini.clue (which-key style helper)
-(now (fn []
-   (local clue (require :mini.clue))
-   (clue.setup {
-      :triggers [
-         ; Leader triggers
-         { :mode "n" :keys "<leader>" }
-         { :mode "x" :keys "<leader>" }
-
-         { :mode "n" :keys "\\" }
-
-         ; Built-in completion
-         { :mode "i" :keys "<C-x>" }
-
-         ; `g` key
-         { :mode "n" :keys "g" }
-         { :mode "x" :keys "g" }
-
-         ; Surround
-         { :mode "n" :keys "s" }
-
-         ; Marks
-         { :mode "n" :keys "'" }
-         { :mode "n" :keys "`" }
-         { :mode "x" :keys "'" }
-         { :mode "x" :keys "`" }
-
-         ; Registers
-         { :mode "n" :keys "\"" }
-         { :mode "x" :keys "\"" }
-         { :mode "i" :keys "<C-r>" }
-         { :mode "c" :keys "<C-r>" }
-
-         ; Window commands
-         { :mode "n" :keys "<C-w>" }
-
-         ; `z` key
-         { :mode "n" :keys "z" }
-         { :mode "x" :keys "z" }
-      ]
-
-      :clues [
-          { :mode "n" :keys "<Leader>b" :desc " Buffer" }
-          { :mode "n" :keys "<Leader>e" :desc " Explore" }
-          { :mode "n" :keys "<Leader>f" :desc " Find" }
-          { :mode "n" :keys "<Leader>g" :desc "󰊢 Git" }
-          { :mode "n" :keys "<Leader>i" :desc "󰏪 Insert" }
-          { :mode "n" :keys "<Leader>l" :desc "󰘦 LSP" }
-          { :mode "n" :keys "<Leader>m" :desc " Mini" }
-          { :mode "n" :keys "<Leader>q" :desc " NVim" }
-          { :mode "n" :keys "<Leader>s" :desc "󰆓 Session" }
-          { :mode "n" :keys "<Leader>s" :desc " Terminal" }
-          { :mode "n" :keys "<Leader>u" :desc "󰔃 UI" }
-          { :mode "n" :keys "<Leader>w" :desc " Window" }
-          (clue.gen_clues.g)
-          (clue.gen_clues.builtin_completion)
-          (clue.gen_clues.marks)
-          (clue.gen_clues.registers)
-          (clue.gen_clues.windows)
-          (clue.gen_clues.z)
-      ]
-      :window {
-          :delay 300
-      }
-   })))
 
 (later (fn []
     (. (require :mini.files) :setup) {
@@ -259,7 +211,7 @@
     }))
 
 ; LSP Config
-(later (fn [] 
+(later (fn []
    (add { :source "https://github.com/neovim/nvim-lspconfig" })
         (vim.lsp.enable "vtsls")
         (vim.lsp.enable "fennel_ls")
@@ -268,7 +220,7 @@
 
 
 ; Aerial
-(later (fn [] 
+(later (fn []
    (add { :source "https://github.com/stevearc/aerial.nvim" })
    ((. (require :aerial) :setup) {})
    (vim.keymap.set "n" "<leader>a" "<cmd>AerialToggle!<CR>" { :desc "Aerial toggle" })))
@@ -327,6 +279,7 @@
   :callback (lambda [] (vim.hl.on_yank { :timeout 500 } ))
 })
 
+
 ;; Statusline
 (now (fn []
    (let [statusline (require :mini.statusline)]
@@ -348,9 +301,9 @@
                 (MiniStatusline.combine_groups [
                     { :hl mode-hl                 :strings [ mode ] }
                     { :hl "MiniStatuslineDevinfo" :strings [ git diff diagnostics lsp ]}
-                    "%<" 
+                    "%<"
                     { :hl "MiniStatuslineFilename" :strings [ filename ] }
-                    "%=" 
+                    "%="
                     { :hl "MiniStatuslineFileinfo" :strings [ fileinfo ] }
                     { :hl mode-hl                  :strings [ search location ] }
                 ])))
@@ -359,6 +312,75 @@
       (set statusline.section_location (fn [] "%2l:%-2v")))))
 
 
+;; Mini.clue (which-key style helper)
+(now (fn []
+   (local clue (require :mini.clue))
+   (clue.setup {
+      ; When to show the helper window
+      :triggers [
+         ; Leader triggers
+         { :mode "n" :keys "<leader>" }
+         { :mode "x" :keys "<leader>" }
+
+         { :mode "n" :keys "\\" }
+
+         ; Built-in completion
+         { :mode "i" :keys "<C-x>" }
+
+         ; `g` key
+         { :mode "n" :keys "g" }
+         { :mode "x" :keys "g" }
+
+         ; Surround
+         { :mode "n" :keys "s" }
+
+         ; Marks
+         { :mode "n" :keys "'" }
+         { :mode "n" :keys "`" }
+         { :mode "x" :keys "'" }
+         { :mode "x" :keys "`" }
+
+         ; Registers
+         { :mode "n" :keys "\"" }
+         { :mode "x" :keys "\"" }
+         { :mode "i" :keys "<C-r>" }
+         { :mode "c" :keys "<C-r>" }
+
+         ; Window commands
+         { :mode "n" :keys "<C-w>" }
+
+         ; `z` key
+         { :mode "n" :keys "z" }
+         { :mode "x" :keys "z" }
+      ]
+      ; Content to show in the helper window
+      :clues [
+          { :mode "n" :keys "<Leader>b" :desc " Buffer" }
+          { :mode "n" :keys "<Leader>e" :desc " Explore" }
+          { :mode "n" :keys "<Leader>f" :desc " Find" }
+          { :mode "n" :keys "<Leader>g" :desc "󰊢 Git" }
+          { :mode "n" :keys "<Leader>i" :desc "󰏪 Insert" }
+          { :mode "n" :keys "<Leader>l" :desc "󰘦 LSP" }
+          { :mode "n" :keys "<Leader>m" :desc " Mini" }
+          { :mode "n" :keys "<Leader>q" :desc " NVim" }
+          { :mode "n" :keys "<Leader>s" :desc "󰆓 Session" }
+          { :mode "n" :keys "<Leader>s" :desc " Terminal" }
+          { :mode "n" :keys "<Leader>u" :desc "󰔃 UI" }
+          { :mode "n" :keys "<Leader>w" :desc " Window" }
+          (clue.gen_clues.g)
+          (clue.gen_clues.builtin_completion)
+          (clue.gen_clues.marks)
+          (clue.gen_clues.registers)
+          (clue.gen_clues.windows)
+          (clue.gen_clues.z)
+      ]
+      :window {
+          :delay 300
+      }
+   })))
+
+
+;; Keybindings
 (now (fn []
    (local map vim.keymap.set)
 
@@ -370,7 +392,7 @@
    (map "n" "<leader>f<enter>" (fn [] (let [pick (require :mini.pick)] (pick.builtin.resume))) { :desc "Resume" } )
    (map "n" "<leader><space>" (fn [] (let [pick (require :mini.pick)] (pick.builtin.grep_live))) { :desc "Find String" } )
    (map "n" "<leader>fb" (fn [] (let [pick (require :mini.pick)] (pick.builtin.buffers))) { :desc "Find Buffer" } )
-   (map "n" "<leader>fw" (fn [] (let [pick (require :mini.pick) word (vim.fn.expand "<cword>")] 
+   (map "n" "<leader>fw" (fn [] (let [pick (require :mini.pick) word (vim.fn.expand "<cword>")]
       (pick.builtin.grep { :pattern word }))) { :desc "Find Buffer" } )
    (map "n" "," (fn [] (let [extra (require :mini.extra)] (extra.pickers.buf_lines { :scope "current" }))) { :desc "Find Lines" } )
    (map "n" "<leader>fo" (fn [] (let [ex (require :mini.extra)] (ex.pickers.oldfiles { :current_dir true }))) { :desc "Old files" })
@@ -398,6 +420,16 @@
    ;; LSP Go-to Pickers
    (map "n" "grr" (fn [] (let [ex (require :mini.extra)] (ex.pickers.lsp { :scope "references" }))) { :desc "Go to references" })
    (map "n" "gri" (fn [] (let [ex (require :mini.extra)] (ex.pickers.lsp { :scope "implementation" }))) { :desc "Go to implementations" })
+
+   (map "n" "mk" (fn [] (let [move (require :mini.move)] (move.move_line "down"))) { :desc "Move line up" })
+   (map "n" "mj" (fn [] (let [move (require :mini.move)] (move.move_line "down"))) { :desc "Move line down" })
+   (map "n" "mh" (fn [] (let [move (require :mini.move)] (move.move_line "left"))) { :desc "Move line up" })
+   (map "n" "ml" (fn [] (let [move (require :mini.move)] (move.move_line "right"))) { :desc "Move line down" })
+
+   (map "v" "mk" (fn [] (let [move (require :mini.move)] (move.move_selection "up"))) { :desc "Move selection up" })
+   (map "v" "mj" (fn [] (let [move (require :mini.move)] (move.move_selection "down"))) { :desc "Move selection down" })
+   (map "v" "mh" (fn [] (let [move (require :mini.move)] (move.move_selection "left"))) { :desc "Move selection left" })
+   (map "v" "ml" (fn [] (let [move (require :mini.move)] (move.move_selection "right"))) { :desc "Move selection left" })
 
    ;; I'm not sure what this does?
    (map "n" "<leader>fr" (fn [] (let [ex (require :mini.extra)] (ex.pickers.visit_paths))) { :desc "Visit paths" })))

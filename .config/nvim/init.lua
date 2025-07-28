@@ -106,28 +106,29 @@ local function _18_()
 end
 later(_18_)
 local function _19_()
+  local move = require("mini.move")
+  do local _ = move.setup end
+  return {mappings = {left = "<S-left>", right = "<S-right>", down = "<S-down>", up = "<S-up>", line_left = "<S-left>", line_right = "<S-right>", line_down = "<S-down>", line_up = "<S-up>"}}
+end
+later(_19_)
+local function _20_()
   add({source = "https://github.com/nvim-treesitter/nvim-treesitter", checkout = "master", monitor = "master"})
   local ts_parsers = {"bash", "dockerfile", "fennel", "fish", "git_config", "git_rebase", "gitattributes", "gitcommit", "gitignore", "go", "gomod", "gosum", "html", "javascript", "json", "lua", "make", "markdown", "python", "rust", "sql", "toml", "tsx", "terraform", "typescript", "vim", "yaml"}
-  local function _20_()
+  local function _21_()
     local nts = require("nvim-treesitter.configs")
     return nts.setup({ensure_installed = ts_parsers, highlight = {enable = true}})
   end
-  return now(_20_)
+  return now(_21_)
 end
-later(_19_)
-local function _21_()
+later(_20_)
+local function _22_()
   local hi = require("mini.hipatterns")
   return hi.setup({hex_color = hi.gen_highlighter.hex_color()})
 end
-later(_21_)
-local function _22_()
+later(_22_)
+local function _23_()
   local is = require("mini.indentscope")
   return is.setup({draw = {delay = 0, animation = is.gen_animation.none()}, symbol = "\226\149\142"})
-end
-now(_22_)
-local function _23_()
-  local clue = require("mini.clue")
-  return clue.setup({triggers = {{mode = "n", keys = "<leader>"}, {mode = "x", keys = "<leader>"}, {mode = "n", keys = "\\"}, {mode = "i", keys = "<C-x>"}, {mode = "n", keys = "g"}, {mode = "x", keys = "g"}, {mode = "n", keys = "s"}, {mode = "n", keys = "'"}, {mode = "n", keys = "`"}, {mode = "x", keys = "'"}, {mode = "x", keys = "`"}, {mode = "n", keys = "\""}, {mode = "x", keys = "\""}, {mode = "i", keys = "<C-r>"}, {mode = "c", keys = "<C-r>"}, {mode = "n", keys = "<C-w>"}, {mode = "n", keys = "z"}, {mode = "x", keys = "z"}}, clues = {{mode = "n", keys = "<Leader>b", desc = "\239\139\146 Buffer"}, {mode = "n", keys = "<Leader>e", desc = "\239\128\130 Explore"}, {mode = "n", keys = "<Leader>f", desc = "\239\128\130 Find"}, {mode = "n", keys = "<Leader>g", desc = "\243\176\138\162 Git"}, {mode = "n", keys = "<Leader>i", desc = "\243\176\143\170 Insert"}, {mode = "n", keys = "<Leader>l", desc = "\243\176\152\166 LSP"}, {mode = "n", keys = "<Leader>m", desc = "\238\173\145 Mini"}, {mode = "n", keys = "<Leader>q", desc = "\239\141\175 NVim"}, {mode = "n", keys = "<Leader>s", desc = "\243\176\134\147 Session"}, {mode = "n", keys = "<Leader>s", desc = "\238\158\149 Terminal"}, {mode = "n", keys = "<Leader>u", desc = "\243\176\148\131 UI"}, {mode = "n", keys = "<Leader>w", desc = "\238\173\191 Window"}, clue.gen_clues.g(), clue.gen_clues.builtin_completion(), clue.gen_clues.marks(), clue.gen_clues.registers(), clue.gen_clues.windows(), clue.gen_clues.z()}, window = {delay = 300}})
 end
 now(_23_)
 local function _24_()
@@ -150,7 +151,7 @@ local function _26_()
 end
 later(_26_)
 local function _27_(diagnostic)
-  _G.assert((nil ~= diagnostic), "Missing argument diagnostic on /Users/ck/.config/nvim/init.fnl:293")
+  _G.assert((nil ~= diagnostic), "Missing argument diagnostic on /Users/ck/.config/nvim/init.fnl:245")
   local diagnostic_message = {[{vim.diagnostic.severity.ERROR}] = diagnostic.message, [{vim.diagnostic.severity.WARN}] = diagnostic.message, [{vim.diagnostic.severity.INFO}] = diagnostic.message, [{vim.diagnostic.severity.HINT}] = diagnostic.message}
   return diagnostic_message[diagnostic.severity]
 end
@@ -189,45 +190,50 @@ local function _30_()
 end
 now(_30_)
 local function _33_()
+  local clue = require("mini.clue")
+  return clue.setup({triggers = {{mode = "n", keys = "<leader>"}, {mode = "x", keys = "<leader>"}, {mode = "n", keys = "\\"}, {mode = "i", keys = "<C-x>"}, {mode = "n", keys = "g"}, {mode = "x", keys = "g"}, {mode = "n", keys = "s"}, {mode = "n", keys = "'"}, {mode = "n", keys = "`"}, {mode = "x", keys = "'"}, {mode = "x", keys = "`"}, {mode = "n", keys = "\""}, {mode = "x", keys = "\""}, {mode = "i", keys = "<C-r>"}, {mode = "c", keys = "<C-r>"}, {mode = "n", keys = "<C-w>"}, {mode = "n", keys = "z"}, {mode = "x", keys = "z"}}, clues = {{mode = "n", keys = "<Leader>b", desc = "\239\139\146 Buffer"}, {mode = "n", keys = "<Leader>e", desc = "\239\128\130 Explore"}, {mode = "n", keys = "<Leader>f", desc = "\239\128\130 Find"}, {mode = "n", keys = "<Leader>g", desc = "\243\176\138\162 Git"}, {mode = "n", keys = "<Leader>i", desc = "\243\176\143\170 Insert"}, {mode = "n", keys = "<Leader>l", desc = "\243\176\152\166 LSP"}, {mode = "n", keys = "<Leader>m", desc = "\238\173\145 Mini"}, {mode = "n", keys = "<Leader>q", desc = "\239\141\175 NVim"}, {mode = "n", keys = "<Leader>s", desc = "\243\176\134\147 Session"}, {mode = "n", keys = "<Leader>s", desc = "\238\158\149 Terminal"}, {mode = "n", keys = "<Leader>u", desc = "\243\176\148\131 UI"}, {mode = "n", keys = "<Leader>w", desc = "\238\173\191 Window"}, clue.gen_clues.g(), clue.gen_clues.builtin_completion(), clue.gen_clues.marks(), clue.gen_clues.registers(), clue.gen_clues.windows(), clue.gen_clues.z()}, window = {delay = 300}})
+end
+now(_33_)
+local function _34_()
   local map = vim.keymap.set
   map("n", "<leader>q", "<cmd>wqa<cr>", {desc = "Quit"})
-  local function _34_()
+  local function _35_()
     local pick = require("mini.pick")
     return pick.builtin.files()
   end
-  map("n", "<leader>ff", _34_, {desc = "Find files"})
-  local function _35_()
+  map("n", "<leader>ff", _35_, {desc = "Find files"})
+  local function _36_()
     local pick = require("mini.pick")
     return pick.builtin.resume()
   end
-  map("n", "<leader>f<enter>", _35_, {desc = "Resume"})
-  local function _36_()
+  map("n", "<leader>f<enter>", _36_, {desc = "Resume"})
+  local function _37_()
     local pick = require("mini.pick")
     return pick.builtin.grep_live()
   end
-  map("n", "<leader><space>", _36_, {desc = "Find String"})
-  local function _37_()
+  map("n", "<leader><space>", _37_, {desc = "Find String"})
+  local function _38_()
     local pick = require("mini.pick")
     return pick.builtin.buffers()
   end
-  map("n", "<leader>fb", _37_, {desc = "Find Buffer"})
-  local function _38_()
+  map("n", "<leader>fb", _38_, {desc = "Find Buffer"})
+  local function _39_()
     local pick = require("mini.pick")
     local word = vim.fn.expand("<cword>")
     return pick.builtin.grep({pattern = word})
   end
-  map("n", "<leader>fw", _38_, {desc = "Find Buffer"})
-  local function _39_()
+  map("n", "<leader>fw", _39_, {desc = "Find Buffer"})
+  local function _40_()
     local extra = require("mini.extra")
     return extra.pickers.buf_lines({scope = "current"})
   end
-  map("n", ",", _39_, {desc = "Find Lines"})
-  local function _40_()
+  map("n", ",", _40_, {desc = "Find Lines"})
+  local function _41_()
     local ex = require("mini.extra")
     return ex.pickers.oldfiles({current_dir = true})
   end
-  map("n", "<leader>fo", _40_, {desc = "Old files"})
-  local function _41_()
+  map("n", "<leader>fo", _41_, {desc = "Old files"})
+  local function _42_()
     local buffer_name = vim.api.nvim_buf_get_name(0)
     local mini_files = require("mini.files")
     if ((buffer_name == "") or string.match(buffer_name, "Starter")) then
@@ -236,51 +242,91 @@ local function _33_()
       return mini_files.open(vim.api.nvim_buf_get_name(0))
     end
   end
-  map("n", "fc", _41_)
-  local function _43_()
+  map("n", "fc", _42_)
+  local function _44_()
     local mini_files = require("mini.files")
     return mini_files.open()
   end
-  map("n", "fe", _43_)
-  local function _44_()
+  map("n", "fe", _44_)
+  local function _45_()
     return vim.lsp.buf.definition()
   end
-  map("n", "<leader>ld", _44_, {desc = "Go to definition"})
-  local function _45_()
+  map("n", "<leader>ld", _45_, {desc = "Go to definition"})
+  local function _46_()
     return vim.lsp.buf.rename()
   end
-  map("n", "<leader>lr", _45_, {desc = "Rename"})
-  local function _46_()
+  map("n", "<leader>lr", _46_, {desc = "Rename"})
+  local function _47_()
     return vim.lsp.buf.code_action()
   end
-  map("n", "<leader>la", _46_, {desc = "Code actions"})
-  local function _47_()
+  map("n", "<leader>la", _47_, {desc = "Code actions"})
+  local function _48_()
     local extra = require("mini.extra")
     return extra.pickers.diagnostic({scope = "current"})
   end
-  map("n", "<leader>le", _47_, {desc = "LSP Errors"})
-  local function _48_()
+  map("n", "<leader>le", _48_, {desc = "LSP Errors"})
+  local function _49_()
     return vim.lsp.buf.definition()
   end
-  map("n", "gd", _48_, {desc = "Go to definition"})
-  local function _49_()
+  map("n", "gd", _49_, {desc = "Go to definition"})
+  local function _50_()
     return vim.lsp.buf.signature_help()
   end
-  map("n", "<leader>lh", _49_, {desc = "Signature help"})
-  local function _50_()
+  map("n", "<leader>lh", _50_, {desc = "Signature help"})
+  local function _51_()
     local ex = require("mini.extra")
     return ex.pickers.lsp({scope = "references"})
   end
-  map("n", "grr", _50_, {desc = "Go to references"})
-  local function _51_()
+  map("n", "grr", _51_, {desc = "Go to references"})
+  local function _52_()
     local ex = require("mini.extra")
     return ex.pickers.lsp({scope = "implementation"})
   end
-  map("n", "gri", _51_, {desc = "Go to implementations"})
-  local function _52_()
+  map("n", "gri", _52_, {desc = "Go to implementations"})
+  local function _53_()
+    local move = require("mini.move")
+    return move.move_line("down")
+  end
+  map("n", "mk", _53_, {desc = "Move line up"})
+  local function _54_()
+    local move = require("mini.move")
+    return move.move_line("down")
+  end
+  map("n", "mj", _54_, {desc = "Move line down"})
+  local function _55_()
+    local move = require("mini.move")
+    return move.move_line("left")
+  end
+  map("n", "mh", _55_, {desc = "Move line up"})
+  local function _56_()
+    local move = require("mini.move")
+    return move.move_line("right")
+  end
+  map("n", "ml", _56_, {desc = "Move line down"})
+  local function _57_()
+    local move = require("mini.move")
+    return move.move_selection("up")
+  end
+  map("v", "mk", _57_, {desc = "Move selection up"})
+  local function _58_()
+    local move = require("mini.move")
+    return move.move_selection("down")
+  end
+  map("v", "mj", _58_, {desc = "Move selection down"})
+  local function _59_()
+    local move = require("mini.move")
+    return move.move_selection("left")
+  end
+  map("v", "mh", _59_, {desc = "Move selection left"})
+  local function _60_()
+    local move = require("mini.move")
+    return move.move_selection("right")
+  end
+  map("v", "ml", _60_, {desc = "Move selection left"})
+  local function _61_()
     local ex = require("mini.extra")
     return ex.pickers.visit_paths()
   end
-  return map("n", "<leader>fr", _52_, {desc = "Visit paths"})
+  return map("n", "<leader>fr", _61_, {desc = "Visit paths"})
 end
-return now(_33_)
+return now(_34_)
