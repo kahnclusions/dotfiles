@@ -50,59 +50,62 @@ local function _4_()
 end
 now(_4_)
 local function _5_()
-  return add({source = "zenbones-theme/zenbones.nvim", depends = {"rktjmp/lush.nvim"}})
+  return require("mini.ai").setup
 end
 later(_5_)
 local function _6_()
-  return require("mini.ai").setup
+  return require("mini.bracketed").setup
 end
 later(_6_)
 local function _7_()
-  return require("mini.bracketed").setup
+  return require("mini.bufremove").setup
 end
 later(_7_)
 local function _8_()
-  return require("mini.bufremove").setup
+  return require("mini.colors").setup
 end
 later(_8_)
 local function _9_()
-  return require("mini.colors").setup
+  return require("mini.comment").setup
 end
 later(_9_)
 local function _10_()
-  return require("mini.comment").setup
+  return require("mini.icons").setup
 end
 later(_10_)
 local function _11_()
-  return require("mini.icons").setup
+  return require("mini.fuzzy").setup
 end
 later(_11_)
 local function _12_()
-  return require("mini.fuzzy").setup
+  return require("mini.misc").setup
 end
 later(_12_)
 local function _13_()
-  return require("mini.misc").setup
+  return require("mini.surround").setup
 end
 later(_13_)
 local function _14_()
-  return require("mini.surround").setup
+  return require("mini.trailspace").setup
 end
 later(_14_)
 local function _15_()
-  return require("mini.trailspace").setup
+  return require("mini.extra").setup
 end
 later(_15_)
 local function _16_()
-  return require("mini.extra").setup
+  return require("mini.visits").setup
 end
 later(_16_)
 local function _17_()
-  return require("mini.visits").setup
+  return require("mini.diff").setup
 end
 later(_17_)
 local function _18_()
-  return require("mini.diff").setup
+  local mini_notify = require("mini.notify")
+  mini_notify.setup()
+  vim.notify = mini_notify.make_notify()
+  return "hello"
 end
 later(_18_)
 local function _19_()
@@ -151,15 +154,15 @@ local function _26_()
 end
 later(_26_)
 local function _27_(diagnostic)
-  _G.assert((nil ~= diagnostic), "Missing argument diagnostic on /Users/ck/.config/nvim/init.fnl:245")
+  _G.assert((nil ~= diagnostic), "Missing argument diagnostic on /Users/chris.kahn/.config/nvim/init.fnl:247")
   local diagnostic_message = {[{vim.diagnostic.severity.ERROR}] = diagnostic.message, [{vim.diagnostic.severity.WARN}] = diagnostic.message, [{vim.diagnostic.severity.INFO}] = diagnostic.message, [{vim.diagnostic.severity.HINT}] = diagnostic.message}
   return diagnostic_message[diagnostic.severity]
 end
 vim.diagnostic.config({severity_sort = true, float = {border = "rounded", source = "if_many"}, underline = {severity = vim.diagnostic.severity.ERROR}, signs = {text = {[vim.diagnostic.severity.ERROR] = "\238\170\135", [vim.diagnostic.severity.WARN] = "\238\169\172", [vim.diagnostic.severity.INFO] = "\238\169\180", [vim.diagnostic.severity.HINT] = "\238\172\166"}}, virtual_text = {source = "if_many", spacing = 2, format = _27_}})
 local function _28_()
-  add({source = "https://github.com/saghen/blink.cmp"})
+  add({source = "saghen/blink.cmp", checkout = "v1.6.0"})
   local blink_cmp = require("blink.cmp")
-  return blink_cmp.setup({keymap = {preset = "default"}, completion = {documentation = {auto_show_delay_ms = 500, auto_show = false}}, sources = {default = {"lsp", "path"}}, fuzzy = {implementation = "lua"}, signature = {enabled = true}})
+  return blink_cmp.setup({keymap = {preset = "default"}, completion = {documentation = {auto_show_delay_ms = 500, auto_show = false}}, sources = {default = {"lsp", "path"}}, fuzzy = {implementation = "prefer_rust"}, signature = {enabled = true}})
 end
 later(_28_)
 local function _29_()
@@ -195,45 +198,51 @@ local function _33_()
 end
 now(_33_)
 local function _34_()
+  add({source = "NeogitOrg/neogit", depends = {"nvim-lua/plenary.nvim"}})
+  local neogit = require("neogit")
+  return neogit.setup()
+end
+later(_34_)
+local function _35_()
   local map = vim.keymap.set
   map("n", "<leader>q", "<cmd>wqa<cr>", {desc = "Quit"})
-  local function _35_()
+  local function _36_()
     local pick = require("mini.pick")
     return pick.builtin.files()
   end
-  map("n", "<leader>ff", _35_, {desc = "Find files"})
-  local function _36_()
+  map("n", "<leader>ff", _36_, {desc = "Find files"})
+  local function _37_()
     local pick = require("mini.pick")
     return pick.builtin.resume()
   end
-  map("n", "<leader>f<enter>", _36_, {desc = "Resume"})
-  local function _37_()
+  map("n", "<leader>f<enter>", _37_, {desc = "Resume"})
+  local function _38_()
     local pick = require("mini.pick")
     return pick.builtin.grep_live()
   end
-  map("n", "<leader><space>", _37_, {desc = "Find String"})
-  local function _38_()
+  map("n", "<leader><space>", _38_, {desc = "Find String"})
+  local function _39_()
     local pick = require("mini.pick")
     return pick.builtin.buffers()
   end
-  map("n", "<leader>fb", _38_, {desc = "Find Buffer"})
-  local function _39_()
+  map("n", "<leader>fb", _39_, {desc = "Find Buffer"})
+  local function _40_()
     local pick = require("mini.pick")
     local word = vim.fn.expand("<cword>")
     return pick.builtin.grep({pattern = word})
   end
-  map("n", "<leader>fw", _39_, {desc = "Find Buffer"})
-  local function _40_()
+  map("n", "<leader>fw", _40_, {desc = "Find Buffer"})
+  local function _41_()
     local extra = require("mini.extra")
     return extra.pickers.buf_lines({scope = "current"})
   end
-  map("n", ",", _40_, {desc = "Find Lines"})
-  local function _41_()
+  map("n", ",", _41_, {desc = "Find Lines"})
+  local function _42_()
     local ex = require("mini.extra")
     return ex.pickers.oldfiles({current_dir = true})
   end
-  map("n", "<leader>fo", _41_, {desc = "Old files"})
-  local function _42_()
+  map("n", "<leader>fo", _42_, {desc = "Old files"})
+  local function _43_()
     local buffer_name = vim.api.nvim_buf_get_name(0)
     local mini_files = require("mini.files")
     if ((buffer_name == "") or string.match(buffer_name, "Starter")) then
@@ -242,91 +251,106 @@ local function _34_()
       return mini_files.open(vim.api.nvim_buf_get_name(0))
     end
   end
-  map("n", "fc", _42_)
-  local function _44_()
+  map("n", "fc", _43_)
+  local function _45_()
     local mini_files = require("mini.files")
     return mini_files.open()
   end
-  map("n", "fe", _44_)
-  local function _45_()
+  map("n", "fe", _45_)
+  local function _46_()
     return vim.lsp.buf.definition()
   end
-  map("n", "<leader>ld", _45_, {desc = "Go to definition"})
-  local function _46_()
+  map("n", "<leader>ld", _46_, {desc = "Go to definition"})
+  local function _47_()
     return vim.lsp.buf.rename()
   end
-  map("n", "<leader>lr", _46_, {desc = "Rename"})
-  local function _47_()
+  map("n", "<leader>lr", _47_, {desc = "Rename"})
+  local function _48_()
     return vim.lsp.buf.code_action()
   end
-  map("n", "<leader>la", _47_, {desc = "Code actions"})
-  local function _48_()
+  map("n", "<leader>la", _48_, {desc = "Code actions"})
+  local function _49_()
     local extra = require("mini.extra")
     return extra.pickers.diagnostic({scope = "current"})
   end
-  map("n", "<leader>le", _48_, {desc = "LSP Errors"})
-  local function _49_()
+  map("n", "<leader>le", _49_, {desc = "LSP Errors"})
+  local function _50_()
     return vim.lsp.buf.definition()
   end
-  map("n", "gd", _49_, {desc = "Go to definition"})
-  local function _50_()
+  map("n", "gd", _50_, {desc = "Go to definition"})
+  local function _51_()
     return vim.lsp.buf.signature_help()
   end
-  map("n", "<leader>lh", _50_, {desc = "Signature help"})
-  local function _51_()
+  map("n", "<leader>lh", _51_, {desc = "Signature help"})
+  local function _52_()
     local ex = require("mini.extra")
     return ex.pickers.lsp({scope = "references"})
   end
-  map("n", "grr", _51_, {desc = "Go to references"})
-  local function _52_()
+  map("n", "grr", _52_, {desc = "Go to references"})
+  local function _53_()
     local ex = require("mini.extra")
     return ex.pickers.lsp({scope = "implementation"})
   end
-  map("n", "gri", _52_, {desc = "Go to implementations"})
-  local function _53_()
-    local move = require("mini.move")
-    return move.move_line("down")
-  end
-  map("n", "mk", _53_, {desc = "Move line up"})
+  map("n", "gri", _53_, {desc = "Go to implementations"})
   local function _54_()
     local move = require("mini.move")
+    return move.move_line("up")
+  end
+  map("n", "mk", _54_, {desc = "Move line up"})
+  local function _55_()
+    local move = require("mini.move")
     return move.move_line("down")
   end
-  map("n", "mj", _54_, {desc = "Move line down"})
-  local function _55_()
+  map("n", "mj", _55_, {desc = "Move line down"})
+  local function _56_()
     local move = require("mini.move")
     return move.move_line("left")
   end
-  map("n", "mh", _55_, {desc = "Move line up"})
-  local function _56_()
+  map("n", "mh", _56_, {desc = "Move line up"})
+  local function _57_()
     local move = require("mini.move")
     return move.move_line("right")
   end
-  map("n", "ml", _56_, {desc = "Move line down"})
-  local function _57_()
+  map("n", "ml", _57_, {desc = "Move line down"})
+  local function _58_()
     local move = require("mini.move")
     return move.move_selection("up")
   end
-  map("v", "mk", _57_, {desc = "Move selection up"})
-  local function _58_()
+  map("v", "mk", _58_, {desc = "Move selection up"})
+  local function _59_()
     local move = require("mini.move")
     return move.move_selection("down")
   end
-  map("v", "mj", _58_, {desc = "Move selection down"})
-  local function _59_()
+  map("v", "mj", _59_, {desc = "Move selection down"})
+  local function _60_()
     local move = require("mini.move")
     return move.move_selection("left")
   end
-  map("v", "mh", _59_, {desc = "Move selection left"})
-  local function _60_()
+  map("v", "mh", _60_, {desc = "Move selection left"})
+  local function _61_()
     local move = require("mini.move")
     return move.move_selection("right")
   end
-  map("v", "ml", _60_, {desc = "Move selection left"})
-  local function _61_()
+  map("v", "ml", _61_, {desc = "Move selection left"})
+  local function _62_()
+    local neogit = require("neogit")
+    return neogit.open({kind = "floating"})
+  end
+  map("n", "<leader>gg", _62_, {desc = "Neo(g)it"})
+  local function _63_()
+    local notify = require("mini.notify")
+    return notify.clear()
+  end
+  map("n", "<leader>nc", _63_, {desc = "Notify Clear"})
+  local function _64_()
+    local notify = require("mini.notify")
+    return notify.show_history()
+  end
+  map("n", "<leader>nh", _64_, {desc = "Notify History"})
+  local function _65_()
     local ex = require("mini.extra")
     return ex.pickers.visit_paths()
   end
-  return map("n", "<leader>fr", _61_, {desc = "Visit paths"})
+  return map("n", "<leader>fr", _65_, {desc = "Visit paths"})
 end
-return now(_34_)
+return now(_35_)

@@ -2,7 +2,7 @@
 ;; easy to use neovim config in a single Fennel file
 
 ;; Set the `vim` global for Fennel.
-(local vim (. _G :vim))
+(local vim _G.vim)
 
 ;; Setup package manager and mini.nvim
 (local path-package (.. (vim.fn.stdpath "data") "/site"))
@@ -48,6 +48,7 @@
 
    (set vim.o.clipboard "unnamed,unnamedplus")
 
+   ; Enable mouse support in terminals
    (set vim.o.mouse "a")
 
    ; Ignore case in search unless explicitly provided
@@ -94,17 +95,13 @@
     })))
 
 
-;; Default colour scheme - load now
+;; Themes / colour scheme
+;; Load our main theme "now"
 (now (fn []
    (add { :source "rebelot/kanagawa.nvim" })
    (vim.cmd "colorscheme kanagawa")
    (add "f-person/auto-dark-mode.nvim")
    ((. (require :auto-dark-mode) :setup) {:update_interval 2000})))
-
-;; Extra colour schemes - load later
-(later (fn []
-   (add { :source "zenbones-theme/zenbones.nvim" :depends ["rktjmp/lush.nvim"] })
-   ))
 
 
 ;; Mini.nvim plugins
@@ -121,6 +118,15 @@
 (later (fn [] (. (require :mini.extra)       :setup))) ; Extras
 (later (fn [] (. (require :mini.visits)      :setup))) ; Frecency tracking
 (later (fn [] (. (require :mini.diff)        :setup))) ; Diff viewer
+
+
+; Notifications
+(later (fn []
+   (let [mini-notify (require :mini.notify)]
+      (mini-notify.setup)
+      (set vim.notify (mini-notify.make_notify))
+      "hello"
+      )))
 
 
 ; mini-move - Move selections around
@@ -192,10 +198,6 @@
       (is.setup {
          :draw { :delay 0 :animation (is.gen_animation.none) }
          :symbol "╎" }))))
-;(later (fn [] (. (require :mini.cursorword)  :setup)))
-; (now (fn []
-;    (add { :source "https://github.com/saghen/blink.indent" })
-;    ((. (require :blink.indent) :setup) {})))
 
 
 (later (fn []
@@ -257,7 +259,7 @@
 
 ;; Completion using blink.cmp
 (later (fn []
-   (add { :source "https://github.com/saghen/blink.cmp" })
+   (add { :source "saghen/blink.cmp" :checkout "v1.6.0" })
    (let [blink-cmp (require :blink.cmp)]
       (blink-cmp.setup {
          :keymap { :preset "default" }
@@ -267,7 +269,7 @@
          :sources {
             :default [ "lsp" "path" ]
          }
-         :fuzzy { :implementation "lua" }
+         :fuzzy { :implementation "prefer_rust" }
          :signature { :enabled true }
    }))))
 
@@ -380,6 +382,13 @@
    })))
 
 
+(later (fn [] 
+   (add { :source "NeogitOrg/neogit" :depends ["nvim-lua/plenary.nvim"] })
+   (local neogit (require :neogit))
+   (neogit.setup)
+   ))
+
+
 ;; Keybindings
 (now (fn []
    (local map vim.keymap.set)
@@ -421,7 +430,7 @@
    (map "n" "grr" (fn [] (let [ex (require :mini.extra)] (ex.pickers.lsp { :scope "references" }))) { :desc "Go to references" })
    (map "n" "gri" (fn [] (let [ex (require :mini.extra)] (ex.pickers.lsp { :scope "implementation" }))) { :desc "Go to implementations" })
 
-   (map "n" "mk" (fn [] (let [move (require :mini.move)] (move.move_line "down"))) { :desc "Move line up" })
+   (map "n" "mk" (fn [] (let [move (require :mini.move)] (move.move_line "up"))) { :desc "Move line up" })
    (map "n" "mj" (fn [] (let [move (require :mini.move)] (move.move_line "down"))) { :desc "Move line down" })
    (map "n" "mh" (fn [] (let [move (require :mini.move)] (move.move_line "left"))) { :desc "Move line up" })
    (map "n" "ml" (fn [] (let [move (require :mini.move)] (move.move_line "right"))) { :desc "Move line down" })
@@ -430,6 +439,13 @@
    (map "v" "mj" (fn [] (let [move (require :mini.move)] (move.move_selection "down"))) { :desc "Move selection down" })
    (map "v" "mh" (fn [] (let [move (require :mini.move)] (move.move_selection "left"))) { :desc "Move selection left" })
    (map "v" "ml" (fn [] (let [move (require :mini.move)] (move.move_selection "right"))) { :desc "Move selection left" })
+
+   ;; Neogit
+   (map "n" "<leader>gg" (fn [] (let [neogit (require :neogit)] (neogit.open { :kind "floating" }))) { :desc "Neo(g)it" })
+
+   ;; Notifications
+   (map "n" "<leader>nc" (fn [] (let [notify (require :mini.notify)] (notify.clear))) { :desc "Notify Clear" })
+   (map "n" "<leader>nh" (fn [] (let [notify (require :mini.notify)] (notify.show_history))) { :desc "Notify History" })
 
    ;; I'm not sure what this does?
    (map "n" "<leader>fr" (fn [] (let [ex (require :mini.extra)] (ex.pickers.visit_paths))) { :desc "Visit paths" })))

@@ -13,7 +13,14 @@ scrollbar_thumb = "#16161d"
 split = "#16161d"
 
 ansi = [
-   "#090618", "#c34043", "#76946a", "#c0a36e", "#7e9cd8", "#957fb8", "#6a9589", "#c8c093"
+   "#090618", # black
+   "#c34043", # red
+   "#76946a", # green
+   "#c0a36e", # yellow
+   "#7e9cd8", # blue
+   "#957fb8", # purple
+   "#6a9589", # aqua
+   "#c8c093"  # grey
 ]
 brights = [
 "#727169", "#e82424", "#98bb6c", "#e6c384", "#7fb4ca", "#938aa9", "#7aa89f", "#dcd7ba"
@@ -29,7 +36,7 @@ inactive_tab_edge = "#1f1f28"
 
 [colors.tab_bar.active_tab]
 fg_color = "#1f1f28"
-bg_color = "#658594"
+bg_color = "#957fb8"
 intensity = "Bold"
 
 [colors.tab_bar.inactive_tab]
