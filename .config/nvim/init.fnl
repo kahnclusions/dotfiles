@@ -506,17 +506,21 @@
 
    (map "n" "<leader>fs" "<cmd>w<cr>" { :desc "Write buffer (save)" })
 
-   ;; File Explorer
-   (map "n" "<leader>fc" (fn []
+   (fn files-open-current []
       (local buffer-name (vim.api.nvim_buf_get_name 0))
       (local mini-files (require :mini.files))
       (if (or (= buffer-name "") (string.match buffer-name "Starter"))
          (mini-files.open (vim.loop.cwd))
-         (mini-files.open (vim.api.nvim_buf_get_name 0)))))
+         (mini-files.open (vim.api.nvim_buf_get_name 0))))
 
-   (map "n" "<leader>fe" (fn []
+   ;; File Explorer
+   (map "n" "<leader>ec" files-open-current { :desc "Explore files at current" })
+   (map "n" "<leader>e." files-open-current { :desc "Explore files at current" })
+
+   (map "n" "<leader>ee" (fn []
       (local mini-files (require :mini.files))
-         (mini-files.open))) 
+         (mini-files.open))
+        { :desc "Explore files" })
 
    ; Pick marks (global + local)
    (map "n" "<leader>mm" (fn []

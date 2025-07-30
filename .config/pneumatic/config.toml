@@ -1,0 +1,105 @@
+[mail_account]
+name = "Personal"
+server = "mail.ck.dev"
+port = 993
+api_key = "fmu1-78e14013-2509e2e96297afd931a3ce291f845ed5-0-ef4165cf5f93f9933d17da6bfc8e0316"
+full_name = "Christopher Kahn"
+
+[smtp_account]
+name = "ck.dev"
+server = "mail.ck.dev"
+port = 465
+user_name = "hello@ck.dev"
+password = "Luckiness.Amendable6.Disparity.Recoil"
+full_name = "Christopher Kahn"
+
+[theme.light]
+text = "#1c2027"
+
+subtext0 = "#5c5f77"
+subtext1 = "#676869"
+subtext2 = "#c2c2c2"
+
+blue = "#0479ff"
+magenta = "#953d96"
+pink = "#f74f9e"
+red = "#d13539"
+orange = "#f7811a"
+yellow = "#944927"
+green = "#64b947"
+teal = "#179299"
+cyan = "#209fb5"
+
+bg0 = "#ffffff"
+bg1 = "#f3f4f5"
+bg2 = "#cfcfd1"
+
+overlay2 = "#7c7f93"
+overlay1 = "#8c8fa1"
+overlay0 = "#c9c9ca"
+
+surface2 = "#acb0be"
+surface1 = "#f2f3f4"
+surface0 = "#dfe0e1"
+
+# [theme.]
+# rosewater = "#dc8a78"
+# flamingo = "#dd7878"
+# pink = "#ea76cb"
+# mauve = "#8839ef"
+# red = "#d20f39"
+# maroon = "#e64553"
+# peach = "#fe640b"
+# yellow = "#df8e1d"
+# green = "#40a02b"
+# teal = "#179299"
+# sky = "#04a5e5"
+# sapphire = "#209fb5"
+# blue = "#1e66f5"
+# lavender = "#7287fd"
+#
+# text = "#4c4f69"
+#
+# subtext1 = "#5c5f77"
+# subtext0 = "#6c6f85"
+#
+# overlay2 = "#7c7f93"
+# overlay1 = "#8c8fa1"
+# overlay0 = "#9ca0b0"
+#
+# surface2 = "#acb0be"
+# surface1 = "#bcc0cc"
+# surface0 = "#ccd0da"
+#
+# base = "#eff1f5"
+# mantle = "#e6e9ef"
+# crust = "#dce0e8"
+#
+
+[theme.dark]
+pink = "#f5c2e7"
+magenta = "#cba6f7"
+red = "#f38ba8"
+orange = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+cyan = "#89dceb"
+blue = "#89b4fa"
+
+text = "#e2e2e2"
+subtext1 = "#dddddd"
+subtext0 = "#a6adc8"
+subtext2 = "#9a9a9a"
+
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+
+surface2 = "#585b70"
+surface1 = "#373739"
+surface0 = "#2b2b2e"
+
+bg0 = "#212125"
+bg1 = "#2b2b2e"
+bg2 = "#151515"
