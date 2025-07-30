@@ -38,14 +38,17 @@
    (set vim.o.number false)
    (set vim.o.relativenumber false)
 
-   (set vim.o.laststatus 2)
+   ; Display certain characters that are usually invisible
    (set vim.o.list true)
+   (set vim.opt.listchars { :tab  "» " :trail  "·" :nbsp  "␣" })
 
    (set vim.o.autoindent true)
    (set vim.o.expandtab true)
 
+   ; Minimal number of screen lines to keep above and below the cursor.
    (set vim.o.scrolloff 10)
 
+   ; Always use the clipboard instead of the + and * registers.
    (set vim.o.clipboard "unnamed,unnamedplus")
 
    ; Enable mouse support in terminals
@@ -65,9 +68,6 @@
    ; Smarter splits
    (set vim.o.splitright true)
    (set vim.o.splitbelow true)
-
-   ; Display certain characters that are usually invisible
-   (set vim.opt.listchars { :tab  "» " :trail  "·" :nbsp  "␣" })
 
    ; Set borders of floating windows
    (set vim.opt.winborder "single")
@@ -99,6 +99,14 @@
 ;; Load our main theme "now"
 (now (fn []
    (add { :source "rebelot/kanagawa.nvim" })
+
+   (local kanagawa (require :kanagawa))
+   (kanagawa.setup {
+      :overrides (lambda [colors] {
+         :FlashLabel { :fg colors.theme.ui.bg :bg colors.theme.vcs.added }
+      })
+   })
+
    (vim.cmd "colorscheme kanagawa")
    (add "f-person/auto-dark-mode.nvim")
    ((. (require :auto-dark-mode) :setup) {:update_interval 2000})))
@@ -120,12 +128,20 @@
 (later (fn [] (. (require :mini.diff)        :setup))) ; Diff viewer
 
 
+; Picker (alternative to Telescope)
+(later (fn [] (let [pick (require :mini.pick)]
+   (pick.setup)
+   (set vim.ui.select pick.ui_select)
+   )))
+
+
 ; Notifications
 (later (fn []
    (let [mini-notify (require :mini.notify)]
-      (mini-notify.setup)
+      (mini-notify.setup {
+         :lsp_progress { :level "WARN" }
+      })
       (set vim.notify (mini-notify.make_notify))
-      "hello"
       )))
 
 
@@ -262,7 +278,10 @@
    (add { :source "saghen/blink.cmp" :checkout "v1.6.0" })
    (let [blink-cmp (require :blink.cmp)]
       (blink-cmp.setup {
-         :keymap { :preset "default" }
+         :keymap { 
+            :preset "default"
+            :<Tab> ["select_and_accept" "fallback_to_mappings"]
+         }
          :completion {
             :documentation { :auto_show false :auto_show_delay_ms 500 }
          }
@@ -314,6 +333,28 @@
       (set statusline.section_location (fn [] "%2l:%-2v")))))
 
 
+;; Helper function to start mini.pick with marks
+(lambda pick-marks [name pattern]
+      (let [pick (require :mini.pick)
+            marks (vim.fn.getmarklist)
+            local-marks (vim.fn.getmarklist (vim.api.nvim_buf_get_name 0))
+            all-marks (vim.fn.extend marks local-marks)
+            cwd (vim.fn.getcwd)
+            items (icollect [_ v (ipairs all-marks)] 
+               (let [file-raw (if (= nil v.file) (vim.api.nvim_buf_get_name 0) v.file)
+                     file (vim.fn.expand file-raw)]
+               (if (and (vim.startswith file cwd) (v.mark:match pattern))
+                  { :text (.. (v.mark:gsub "'" "") "│" (. v.pos 2) "│" (file:sub (+ 2 (cwd:len))))
+                    :path (vim.fn.expand file) 
+                    :lnum (. v.pos 2) }
+                  nil))
+            )
+            height (if (> (length items) 30) 40 30)
+            ]
+         (pick.start { :source { :name name :items items } :window { :config { :height height }} }))
+     )
+
+
 ;; Mini.clue (which-key style helper)
 (now (fn []
    (local clue (require :mini.clue))
@@ -342,6 +383,9 @@
          { :mode "x" :keys "'" }
          { :mode "x" :keys "`" }
 
+         { :mode "n" :keys "m" }
+         { :mode "x" :keys "m" }
+
          ; Registers
          { :mode "n" :keys "\"" }
          { :mode "x" :keys "\"" }
@@ -363,7 +407,8 @@
           { :mode "n" :keys "<Leader>g" :desc "󰊢 Git" }
           { :mode "n" :keys "<Leader>i" :desc "󰏪 Insert" }
           { :mode "n" :keys "<Leader>l" :desc "󰘦 LSP" }
-          { :mode "n" :keys "<Leader>m" :desc " Mini" }
+          { :mode "n" :keys "<Leader>m" :desc "󰸕 Marks" }
+          { :mode "n" :keys "<Leader>n" :desc "󰎟 Notify" }
           { :mode "n" :keys "<Leader>q" :desc " NVim" }
           { :mode "n" :keys "<Leader>s" :desc "󰆓 Session" }
           { :mode "n" :keys "<Leader>s" :desc " Terminal" }
@@ -382,11 +427,59 @@
    })))
 
 
+;; Neogit
 (later (fn [] 
    (add { :source "NeogitOrg/neogit" :depends ["nvim-lua/plenary.nvim"] })
    (local neogit (require :neogit))
    (neogit.setup)
    ))
+
+
+(later (fn []
+   (add { :source "chentoast/marks.nvim" })
+   (local marks (require :marks))
+   (marks.setup)
+   ))
+
+
+;; flash.nvim - jump to anywhere
+(later (fn [] 
+   (add { :source "folke/flash.nvim" })
+   (let [map vim.keymap.set 
+         flash (require :flash)]
+      (flash.setup)
+
+      ; Find anything
+      (map ["n" "x" "o" "v"] "f" (fn [] (let [flash (require :flash)] (flash.jump))) { :desc "Flash jump" })
+      (map ["i"] "<c-f>" (fn [] (let [flash (require :flash)] (flash.jump))) { :desc "Flash jump" })
+      (map ["n" "x" "o" "v"] "F" (fn [] (let [flash (require :flash)] (flash.treesitter))) { :desc "Flash treesitter jump" })
+      (map "c" "<c-s>" (fn [] (let [flash (require :flash)] (flash.toggle))) { :desc "Flash toggle" })
+
+      (map ["n" "x" "o"] "<leader>jc" (fn [] (let [flash (require :flash)] (flash.jump { :continue true }))) { :desc "Continue jump" })
+
+      ; Jump to line
+      (map ["n" "x" "o"] "<leader>jl" (fn [] (let [flash (require :flash)] (flash.jump {
+         :search { :mode "search" :max_length 0 }
+         :label { :after [0 0] }
+         :pattern "^"
+      }))) { :desc "Jump to line" })
+
+      ; Start saerch with current word under cursor
+      (map ["n" "x" "o"] "<leader>jw" (fn [] (let [flash (require :flash)] (flash.jump {
+         :pattern (vim.fn.expand "<cword>")
+      }))) { :desc "Jump to current word" })
+
+      ; Show vim diagnostics at jump destination (doesn't jump)
+      (map ["n"] "<leader>jd" (fn [] 
+         (let [flash (require :flash)] 
+            (flash.jump {
+               :action (lambda [matched state]
+                  (vim.api.nvim_win_call matched.win (fn []
+                     (vim.api.nvim_win_set_cursor matched.win matched.pos)
+                     (vim.diagnostic.open_float)))
+                  (state:restore))
+            }))
+      ) { :desc "Show diagnostics at location" }))))
 
 
 ;; Keybindings
@@ -396,27 +489,46 @@
    ;; How to escape
    (map "n" "<leader>q" "<cmd>wqa<cr>" { :desc "Quit" })
 
+   ;; Windows
+   (map "n" "<leader>wv" "<C-w>v<cr>" { :desc "Split window vertically" })
+   (map "n" "<leader>ws" "<C-w>s<cr>" { :desc "Split window horizontally" })
+   (map "n" "<leader>wc" "<C-w>c<cr>" { :desc "Close window" })
+
    ;; Finding files
-   (map "n" "<leader>ff" (fn [] (let [pick (require :mini.pick)] (pick.builtin.files))) { :desc "Find files" } )
-   (map "n" "<leader>f<enter>" (fn [] (let [pick (require :mini.pick)] (pick.builtin.resume))) { :desc "Resume" } )
-   (map "n" "<leader><space>" (fn [] (let [pick (require :mini.pick)] (pick.builtin.grep_live))) { :desc "Find String" } )
-   (map "n" "<leader>fb" (fn [] (let [pick (require :mini.pick)] (pick.builtin.buffers))) { :desc "Find Buffer" } )
+   (map "n" "<leader>ff" (fn [] (let [pick (require :mini.pick)] (pick.builtin.files))) { :desc "Find files" })
+   (map "n" "<leader>f<enter>" (fn [] (let [pick (require :mini.pick)] (pick.builtin.resume))) { :desc "Resume" })
+   (map "n" "<leader><space>" (fn [] (let [pick (require :mini.pick)] (pick.builtin.grep_live))) { :desc "Find String" })
+   (map "n" "<leader>fb" (fn [] (let [pick (require :mini.pick)] (pick.builtin.buffers))) { :desc "Find Buffer" })
    (map "n" "<leader>fw" (fn [] (let [pick (require :mini.pick) word (vim.fn.expand "<cword>")]
-      (pick.builtin.grep { :pattern word }))) { :desc "Find Buffer" } )
-   (map "n" "," (fn [] (let [extra (require :mini.extra)] (extra.pickers.buf_lines { :scope "current" }))) { :desc "Find Lines" } )
+      (pick.builtin.grep { :pattern word }))) { :desc "Find Buffer" })
+   (map "n" "," (fn [] (let [extra (require :mini.extra)] (extra.pickers.buf_lines { :scope "current" }))) { :desc "Find Lines" })
    (map "n" "<leader>fo" (fn [] (let [ex (require :mini.extra)] (ex.pickers.oldfiles { :current_dir true }))) { :desc "Old files" })
 
+   (map "n" "<leader>fs" "<cmd>w<cr>" { :desc "Write buffer (save)" })
+
    ;; File Explorer
-   (map "n" "fc" (fn []
+   (map "n" "<leader>fc" (fn []
       (local buffer-name (vim.api.nvim_buf_get_name 0))
       (local mini-files (require :mini.files))
       (if (or (= buffer-name "") (string.match buffer-name "Starter"))
          (mini-files.open (vim.loop.cwd))
          (mini-files.open (vim.api.nvim_buf_get_name 0)))))
 
-   (map "n" "fe" (fn []
+   (map "n" "<leader>fe" (fn []
       (local mini-files (require :mini.files))
-         (mini-files.open)))
+         (mini-files.open))) 
+
+   ; Pick marks (global + local)
+   (map "n" "<leader>mm" (fn []
+      (pick-marks "User marks" "[A-Za-z]")) { :desc "All user marks" })
+   (map "n" "<leader>mg" (fn []
+      (pick-marks "Global marks" "[A-Z]")) { :desc "Global marks" })
+   (map "n" "<leader>ml" (fn []
+      (pick-marks "Local marks" "[a-z]")) { :desc "Local user marks" })
+   (map "n" "<leader>mM" (fn []
+      (pick-marks "Marks" ".")) { :desc "All marks" })
+   (map "n" "<leader>ma" (fn []
+      (pick-marks "Marks" ".")) { :desc "All marks" })
 
    ;; LSP
    (map "n" "<leader>ld" (fn [] (vim.lsp.buf.definition)) { :desc "Go to definition" } )
@@ -426,19 +538,22 @@
    (map "n" "gd" (fn [] (vim.lsp.buf.definition)) { :desc "Go to definition" } )
    (map "n" "<leader>lh" (fn [] (vim.lsp.buf.signature_help)) { :desc "Signature help" })
 
-   ;; LSP Go-to Pickers
+   ; LSP Go-to Pickers
    (map "n" "grr" (fn [] (let [ex (require :mini.extra)] (ex.pickers.lsp { :scope "references" }))) { :desc "Go to references" })
    (map "n" "gri" (fn [] (let [ex (require :mini.extra)] (ex.pickers.lsp { :scope "implementation" }))) { :desc "Go to implementations" })
 
-   (map "n" "mk" (fn [] (let [move (require :mini.move)] (move.move_line "up"))) { :desc "Move line up" })
-   (map "n" "mj" (fn [] (let [move (require :mini.move)] (move.move_line "down"))) { :desc "Move line down" })
-   (map "n" "mh" (fn [] (let [move (require :mini.move)] (move.move_line "left"))) { :desc "Move line up" })
-   (map "n" "ml" (fn [] (let [move (require :mini.move)] (move.move_line "right"))) { :desc "Move line down" })
+   ; Shift lines and selections
+   (map "n" "sk" (fn [] (let [move (require :mini.move)] (move.move_line "up"))) { :desc "Move line up" })
+   (map "n" "sj" (fn [] (let [move (require :mini.move)] (move.move_line "down"))) { :desc "Move line down" })
+   (map "n" "sh" (fn [] (let [move (require :mini.move)] (move.move_line "left"))) { :desc "Move line up" })
+   (map "n" "sl" (fn [] (let [move (require :mini.move)] (move.move_line "right"))) { :desc "Move line down" })
+   (map "v" "sk" (fn [] (let [move (require :mini.move)] (move.move_selection "up"))) { :desc "Move selection up" })
+   (map "v" "sj" (fn [] (let [move (require :mini.move)] (move.move_selection "down"))) { :desc "Move selection down" })
+   (map "v" "sh" (fn [] (let [move (require :mini.move)] (move.move_selection "left"))) { :desc "Move selection left" })
+   (map "v" "sl" (fn [] (let [move (require :mini.move)] (move.move_selection "right"))) { :desc "Move selection left" })
 
-   (map "v" "mk" (fn [] (let [move (require :mini.move)] (move.move_selection "up"))) { :desc "Move selection up" })
-   (map "v" "mj" (fn [] (let [move (require :mini.move)] (move.move_selection "down"))) { :desc "Move selection down" })
-   (map "v" "mh" (fn [] (let [move (require :mini.move)] (move.move_selection "left"))) { :desc "Move selection left" })
-   (map "v" "ml" (fn [] (let [move (require :mini.move)] (move.move_selection "right"))) { :desc "Move selection left" })
+   ;; Diagnostics
+   (map "n" "<leader>dd" (fn [] (vim.diagnostic.open_float)) { :desc "Open diagnostic float" })
 
    ;; Neogit
    (map "n" "<leader>gg" (fn [] (let [neogit (require :neogit)] (neogit.open { :kind "floating" }))) { :desc "Neo(g)it" })
@@ -449,4 +564,3 @@
 
    ;; I'm not sure what this does?
    (map "n" "<leader>fr" (fn [] (let [ex (require :mini.extra)] (ex.pickers.visit_paths))) { :desc "Visit paths" })))
-

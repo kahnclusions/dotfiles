@@ -40,7 +40,7 @@ end
 
 return {
    font = wezterm.font_with_fallback({
-      "Pragmasevka",
+      "Kahnsevka",
       "Symbols Nerd Font",
    }),
    font_size = 16.0,
