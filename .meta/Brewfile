@@ -1,0 +1,44 @@
+tap "homebrew/cask-fonts"
+tap "homebrew/cask-versions"
+tap "homebrew/cask-drivers"
+tap "koekeishiya/formulae" # provides yabai, skhd
+tap "cormacrelf/tap" # provides dark-notify
+tap "buo/cask-upgrade"
+
+cask_args no_quarantine: true
+
+# Apps
+cask "alfred"
+cask "discord"
+cask "plexamp"
+cask "signal"
+cask "wezterm@nightly"
+cask "firefox@developer-edition"
+cask "nikitabobko/tap/aerospace"
+
+# nerd fonts
+cask "font-symbols-only-nerd-font", force: true
+
+# The one true editor
+brew "neovim"
+
+# Terminal tools
+brew "fish"
+brew "ripgrep"
+brew "bottom"
+brew "jq"
+brew "tldr"
+brew "wget"
+brew "w3m"
+brew "fd"
+brew "bat"
+brew "btop"
+brew "fastfetch"
+
+brew "autoconf"
+brew "automake"
+brew "coreutils"
+
+brew "age"
+brew "stylua"
+
