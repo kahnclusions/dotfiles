@@ -1,6 +1,0 @@
-[filesystem "Amazon.com Inc.|22.0.2|/dev/disk3s5"]
-	timestampResolution = 3000 nanoseconds
-	minRacyThreshold = 0 nanoseconds
-[filesystem "Amazon.com Inc.|17.0.12|/dev/disk3s5"]
-	timestampResolution = 3000 nanoseconds
-	minRacyThreshold = 0 nanoseconds
