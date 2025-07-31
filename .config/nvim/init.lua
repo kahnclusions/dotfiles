@@ -10,7 +10,10 @@ if not vim.loop.fs_stat(mini_path) then
   vim.cmd("echo \"Installed `mini.nvim`\" | redraw")
 else
 end
-require("mini.deps").setup({path = {package = path_package}})
+do
+  local deps = require("mini.deps")
+  deps.setup({path = {package = path_package}})
+end
 local add = _G.MiniDeps.add
 local now = _G.MiniDeps.now
 local later = _G.MiniDeps.later
@@ -45,7 +48,7 @@ local function _4_()
   add({source = "rebelot/kanagawa.nvim"})
   local kanagawa = require("kanagawa")
   local function _5_(colors)
-    _G.assert((nil ~= colors), "Missing argument colors on /Users/ck/.config/nvim/init.fnl:105")
+    _G.assert((nil ~= colors), "Missing argument colors on /Users/ck/.config/nvim/init.fnl:125")
     return {FlashLabel = {fg = colors.theme.ui.bg, bg = colors.theme.vcs.added}}
   end
   kanagawa.setup({overrides = _5_})
@@ -166,7 +169,7 @@ local function _28_()
 end
 later(_28_)
 local function _29_(diagnostic)
-  _G.assert((nil ~= diagnostic), "Missing argument diagnostic on /Users/ck/.config/nvim/init.fnl:263")
+  _G.assert((nil ~= diagnostic), "Missing argument diagnostic on /Users/ck/.config/nvim/init.fnl:283")
   local diagnostic_message = {[{vim.diagnostic.severity.ERROR}] = diagnostic.message, [{vim.diagnostic.severity.WARN}] = diagnostic.message, [{vim.diagnostic.severity.INFO}] = diagnostic.message, [{vim.diagnostic.severity.HINT}] = diagnostic.message}
   return diagnostic_message[diagnostic.severity]
 end
@@ -205,8 +208,8 @@ local function _32_()
 end
 now(_32_)
 local function pick_marks(name, pattern)
-  _G.assert((nil ~= pattern), "Missing argument pattern on /Users/ck/.config/nvim/init.fnl:337")
-  _G.assert((nil ~= name), "Missing argument name on /Users/ck/.config/nvim/init.fnl:337")
+  _G.assert((nil ~= pattern), "Missing argument pattern on /Users/ck/.config/nvim/init.fnl:357")
+  _G.assert((nil ~= name), "Missing argument name on /Users/ck/.config/nvim/init.fnl:357")
   local pick = require("mini.pick")
   local marks = vim.fn.getmarklist()
   local local_marks = vim.fn.getmarklist(vim.api.nvim_buf_get_name(0))
@@ -308,8 +311,8 @@ local function _42_()
   local function _50_()
     local flash0 = require("flash")
     local function _51_(matched, state)
-      _G.assert((nil ~= state), "Missing argument state on /Users/ck/.config/nvim/init.fnl:476")
-      _G.assert((nil ~= matched), "Missing argument matched on /Users/ck/.config/nvim/init.fnl:476")
+      _G.assert((nil ~= state), "Missing argument state on /Users/ck/.config/nvim/init.fnl:496")
+      _G.assert((nil ~= matched), "Missing argument matched on /Users/ck/.config/nvim/init.fnl:496")
       local function _52_()
         vim.api.nvim_win_set_cursor(matched.win, matched.pos)
         return vim.diagnostic.open_float()

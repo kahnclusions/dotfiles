@@ -1,10 +1,26 @@
 ;; Kickstart.fnl
-;; easy to use neovim config in a single Fennel file
+;;
+;; Easy to use neovim config in a single Fennel file
+;;
+;; This is a pretty good example of how to configure Neovim
+;; without using overly complex distributions. I've tried to
+;; document what's going on as much as possible.
+;;
+;; This config provides most of the things one comes to expect
+;; from a code editor, like auto-complete, do to definition,
+;; hover documentation, bookmarks, fuzzy finder, etc.
+;;
+;; If you aren't familiar with Fennel, you can look in the
+;; [fennel reference](https://fennel-lang.org/reference) for help.
+;;
+;; "These are your father's parentheses. Elegant weapons for a more... civilized age."
 
-;; Set the `vim` global for Fennel.
+
+;; Set the `vim` global.
 (local vim _G.vim)
 
-;; Setup package manager and mini.nvim
+;; Setup package manager and mini.nvim.
+;; NOTE: If you don't want to bring in all of mini.nvim, you could instead clone `mini.deps`.
 (local path-package (.. (vim.fn.stdpath "data") "/site"))
 (local mini-path (.. path-package "/pack/deps/start/mini.nvim"))
 (local clone-cmd ["git" "clone" "--filter=blob:none" "https://github.com/echasnovski/mini.nvim" mini-path])
@@ -16,36 +32,40 @@
       (vim.cmd "packadd mini.nvim | helptags ALL")
       (vim.cmd "echo \"Installed `mini.nvim`\" | redraw")))
 
-((. (require :mini.deps) :setup) { :path { :package path-package }})
+;; This is the part that actually sets up the package manager.
+(let [deps (require :mini.deps)]
+  (deps.setup { :path { :package path-package }}))
 
 
 ;; Mini.deps globals
-(local add _G.MiniDeps.add)
-(local now _G.MiniDeps.now)
-(local later _G.MiniDeps.later)
+(local add _G.MiniDeps.add) ; adds a package
+(local now _G.MiniDeps.now) ; runs a function "now", for packages needed by the first render
+(local later _G.MiniDeps.later) ; runs a function "later" on the next event loop, allowing packages
+                                ; to be loaded asynchronously without blocking Neovim from starting.
 
 
-;; nfnl - this converts fennel to lua for neovim
+;; nfnl - this converts Fennel to Lua when saving this file.
 (add { :source "https://github.com/Olical/nfnl" })
 
 
-;; Basic Neovim configuration, runs immediately
+;; Basic Neovim configuration
 (now (fn []
    ; Leader key
    (set vim.g.mapleader " ")
 
-   ; Enable line number column, and absolute/relative line numbers
+   ; I don't like line numbers being visible, so I disable them completely.
    (set vim.o.number false)
    (set vim.o.relativenumber false)
 
-   ; Display certain characters that are usually invisible
+   ; Display certain (undesirable) characters that are usually invisible.
    (set vim.o.list true)
    (set vim.opt.listchars { :tab  "» " :trail  "·" :nbsp  "␣" })
 
+   ; Auto-indent after pressing enter, and expand tab into spaces.
    (set vim.o.autoindent true)
    (set vim.o.expandtab true)
 
-   ; Minimal number of screen lines to keep above and below the cursor.
+   ; Minimum number of screen lines to keep above and below the cursor.
    (set vim.o.scrolloff 10)
 
    ; Always use the clipboard instead of the + and * registers.
@@ -58,10 +78,10 @@
    (set vim.o.ignorecase true)
    (set vim.o.smartcase true)
 
-   ; Always show the sign column
+   ; Always show the sign column (this stops the file content from shifting left/right as signs appear and disappear)
    (set vim.o.signcolumn "yes")
 
-   ; Set shorter update times
+   ; Set shorter (faster) update times
    (set vim.o.updatetime 250)
    (set vim.o.timeoutlen 300)
 
@@ -106,8 +126,8 @@
          :FlashLabel { :fg colors.theme.ui.bg :bg colors.theme.vcs.added }
       })
    })
-
    (vim.cmd "colorscheme kanagawa")
+
    (add "f-person/auto-dark-mode.nvim")
    ((. (require :auto-dark-mode) :setup) {:update_interval 2000})))
 
