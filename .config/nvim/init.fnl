@@ -158,11 +158,17 @@
 ; Notifications
 (later (fn []
    (let [mini-notify (require :mini.notify)]
-      (mini-notify.setup {
-         :lsp_progress { :level "WARN" }
-      })
-      (set vim.notify (mini-notify.make_notify))
-      )))
+      ; Don't show lsp progress in mini.notify, we'll use Fidget later
+      (mini-notify.setup { :lsp_progress { :enable false }})
+      ; Override `vim.notify` to send all notifications to Mini
+      (set vim.notify (mini-notify.make_notify)))))
+
+
+; Fidget notifier for lsp_progress messages
+(later (fn []
+   (add { :source "j-hui/fidget.nvim" })
+   (local fidget (require :fidget))
+   (fidget.setup)))
 
 
 ; mini-move - Move selections around
