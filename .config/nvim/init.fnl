@@ -133,19 +133,19 @@
 
 
 ;; Mini.nvim plugins
-(later (fn [] (. (require :mini.ai)          :setup))) ; Better around/inside text objects
-(later (fn [] (. (require :mini.bracketed)   :setup))) ; Movement using ][
-(later (fn [] (. (require :mini.bufremove)   :setup))) ; Remove buffers after a while
-(later (fn [] (. (require :mini.colors)      :setup))) ;
-(later (fn [] (. (require :mini.comment)     :setup))) ;
-(later (fn [] (. (require :mini.icons)       :setup))) ; Various icons
-(later (fn [] (. (require :mini.fuzzy)       :setup))) ; Fuzzy search
-(later (fn [] (. (require :mini.misc)        :setup))) ; Miscellanous configuration
-(later (fn [] (. (require :mini.surround)    :setup))) ; vim-surround alternative
-(later (fn [] (. (require :mini.trailspace)  :setup))) ; Trailing spaces
-(later (fn [] (. (require :mini.extra)       :setup))) ; Extras
-(later (fn [] (. (require :mini.visits)      :setup))) ; Frecency tracking
-(later (fn [] (. (require :mini.diff)        :setup))) ; Diff viewer
+(later (fn [] ((. (require :mini.ai)          :setup)))) ; Better around/inside text objects
+(later (fn [] ((. (require :mini.bracketed)   :setup)))) ; Movement using ][
+(later (fn [] ((. (require :mini.bufremove)   :setup)))) ; Remove buffers after a while
+(later (fn [] ((. (require :mini.colors)      :setup)))) ;
+(later (fn [] ((. (require :mini.comment)     :setup)))) ;
+(later (fn [] ((. (require :mini.icons)       :setup)))) ; Various icons
+(later (fn [] ((. (require :mini.fuzzy)       :setup)))) ; Fuzzy search
+(later (fn [] ((. (require :mini.misc)        :setup)))) ; Miscellanous configuration
+(later (fn [] ((. (require :mini.surround)    :setup)))) ; vim-surround alternative
+(later (fn [] ((. (require :mini.trailspace)  :setup)))) ; Trailing spaces
+(later (fn [] ((. (require :mini.extra)       :setup)))) ; Extras
+(later (fn [] ((. (require :mini.visits)      :setup)))) ; Frecency tracking
+(later (fn [] ((. (require :mini.diff)        :setup)))) ; Diff viewer
 
 
 ; Picker (alternative to Telescope)
@@ -243,7 +243,7 @@
 
 
 (later (fn []
-    (. (require :mini.files) :setup) {
+    ((. (require :mini.files) :setup) {
         :mappings {
             :close "<ESC>"
         }
@@ -252,7 +252,7 @@
             :border "rounded"
             :width_preview 80
         }
-    }))
+    })))
 
 ; LSP Config
 (later (fn []
@@ -266,7 +266,7 @@
 ; Aerial
 (later (fn []
    (add { :source "https://github.com/stevearc/aerial.nvim" })
-   ((. (require :aerial) :setup) {})
+   ((. (require :aerial) :setup))
    (vim.keymap.set "n" "<leader>a" "<cmd>AerialToggle!<CR>" { :desc "Aerial toggle" })))
 
 
@@ -541,7 +541,7 @@
 
    ;; File Explorer
    (map "n" "<leader>f." files-open-current { :desc "Explore files at current" })
-   (map "n" "<leader>fe" (fn [] (. (require :mini.files) :open)) { :desc "Explore files" })
+   (map "n" "<leader>fe" (fn [] ((. (require :mini.files) :open))) { :desc "Explore files" })
 
    ; Pick marks (global + local)
    (map "n" "<leader>mm" (fn []

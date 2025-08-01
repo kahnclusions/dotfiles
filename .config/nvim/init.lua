@@ -61,55 +61,55 @@ local function _5_()
 end
 now(_5_)
 local function _7_()
-  return require("mini.ai").setup
+  return require("mini.ai").setup()
 end
 later(_7_)
 local function _8_()
-  return require("mini.bracketed").setup
+  return require("mini.bracketed").setup()
 end
 later(_8_)
 local function _9_()
-  return require("mini.bufremove").setup
+  return require("mini.bufremove").setup()
 end
 later(_9_)
 local function _10_()
-  return require("mini.colors").setup
+  return require("mini.colors").setup()
 end
 later(_10_)
 local function _11_()
-  return require("mini.comment").setup
+  return require("mini.comment").setup()
 end
 later(_11_)
 local function _12_()
-  return require("mini.icons").setup
+  return require("mini.icons").setup()
 end
 later(_12_)
 local function _13_()
-  return require("mini.fuzzy").setup
+  return require("mini.fuzzy").setup()
 end
 later(_13_)
 local function _14_()
-  return require("mini.misc").setup
+  return require("mini.misc").setup()
 end
 later(_14_)
 local function _15_()
-  return require("mini.surround").setup
+  return require("mini.surround").setup()
 end
 later(_15_)
 local function _16_()
-  return require("mini.trailspace").setup
+  return require("mini.trailspace").setup()
 end
 later(_16_)
 local function _17_()
-  return require("mini.extra").setup
+  return require("mini.extra").setup()
 end
 later(_17_)
 local function _18_()
-  return require("mini.visits").setup
+  return require("mini.visits").setup()
 end
 later(_18_)
 local function _19_()
-  return require("mini.diff").setup
+  return require("mini.diff").setup()
 end
 later(_19_)
 local function _20_()
@@ -159,8 +159,7 @@ local function _27_()
 end
 now(_27_)
 local function _28_()
-  do local _ = require("mini.files").setup end
-  return {mappings = {close = "<ESC>"}, windows = {preview = true, border = "rounded", width_preview = 80}}
+  return require("mini.files").setup({mappings = {close = "<ESC>"}, windows = {preview = true, border = "rounded", width_preview = 80}})
 end
 later(_28_)
 local function _29_()
@@ -173,7 +172,7 @@ end
 later(_29_)
 local function _30_()
   add({source = "https://github.com/stevearc/aerial.nvim"})
-  require("aerial").setup({})
+  require("aerial").setup()
   return vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>", {desc = "Aerial toggle"})
 end
 later(_30_)
@@ -388,7 +387,7 @@ local function _55_()
   end
   map("n", "<leader>f.", files_open_current, {desc = "Explore files at current"})
   local function _64_()
-    return require("mini.files").open
+    return require("mini.files").open()
   end
   map("n", "<leader>fe", _64_, {desc = "Explore files"})
   local function _65_()
