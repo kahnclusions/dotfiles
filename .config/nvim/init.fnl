@@ -45,7 +45,7 @@
 
 
 ;; nfnl - this converts Fennel to Lua when saving this file.
-(add { :source "https://github.com/Olical/nfnl" })
+(later (fn [] (add { :source "https://github.com/Olical/nfnl" })))
 
 
 ;; Basic Neovim configuration
@@ -382,7 +382,7 @@
 
 
 ;; Mini.clue (which-key style helper)
-(now (fn []
+(later (fn []
    (local clue (require :mini.clue))
    (clue.setup {
       ; When to show the helper window
@@ -509,7 +509,7 @@
 
 
 ;; Keybindings
-(now (fn []
+(later (fn []
    (local map vim.keymap.set)
 
    ;; How to escape
@@ -540,13 +540,8 @@
          (mini-files.open (vim.api.nvim_buf_get_name 0))))
 
    ;; File Explorer
-   (map "n" "<leader>ec" files-open-current { :desc "Explore files at current" })
-   (map "n" "<leader>e." files-open-current { :desc "Explore files at current" })
-
-   (map "n" "<leader>ee" (fn []
-      (local mini-files (require :mini.files))
-         (mini-files.open))
-        { :desc "Explore files" })
+   (map "n" "<leader>f." files-open-current { :desc "Explore files at current" })
+   (map "n" "<leader>fe" (fn [] (. (require :mini.files) :open)) { :desc "Explore files" })
 
    ; Pick marks (global + local)
    (map "n" "<leader>mm" (fn []
