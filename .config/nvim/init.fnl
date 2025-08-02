@@ -1,4 +1,4 @@
-;; Kickstart.fnl
+;; init.fnl
 ;;
 ;; Easy to use neovim config in a single Fennel file
 ;;
@@ -39,23 +39,19 @@
 
 ;; Mini.deps globals
 (local add _G.MiniDeps.add) ; adds a package
-(local now _G.MiniDeps.now) ; runs a function "now", for packages needed by the first render
+(local now _G.MiniDeps.now) ; runs a function "now", for packages needed by the first render. Errors
+                            ; are collected and displayed together with vim.notify.
 (local later _G.MiniDeps.later) ; runs a function "later" on the next event loop, allowing packages
                                 ; to be loaded asynchronously without blocking Neovim from starting.
 
 
-;; nfnl - this converts Fennel to Lua when saving this file.
-(later (fn [] (add { :source "https://github.com/Olical/nfnl" })))
-
-
 ;; Basic Neovim configuration
 (now (fn []
-   ; Leader key
-   (set vim.g.mapleader " ")
+   ; Wrap long lines
+   (set vim.o.wrap true)
 
    ; I don't like line numbers being visible, so I disable them completely.
    (set vim.o.number false)
-   (set vim.o.relativenumber false)
 
    ; Display certain (undesirable) characters that are usually invisible.
    (set vim.o.list true)
@@ -71,37 +67,28 @@
    ; Always use the clipboard instead of the + and * registers.
    (set vim.o.clipboard "unnamed,unnamedplus")
 
-   ; Enable mouse support in terminals
-   (set vim.o.mouse "a")
-
-   ; Ignore case in search unless explicitly provided
-   (set vim.o.ignorecase true)
-   (set vim.o.smartcase true)
-
-   ; Always show the sign column (this stops the file content from shifting left/right as signs appear and disappear)
-   (set vim.o.signcolumn "yes")
-
    ; Set shorter (faster) update times
    (set vim.o.updatetime 250)
    (set vim.o.timeoutlen 300)
-
-   ; Smarter splits
-   (set vim.o.splitright true)
-   (set vim.o.splitbelow true)
 
    ; Set borders of floating windows
    (set vim.opt.winborder "single")
 
    ; Escape key clears search highlights
-   (vim.keymap.set "n" "<Esc>" "<cmd>nohlsearch<CR>")))
+   (vim.keymap.set "n" "<Esc>" "<cmd>nohlsearch<CR>")
 
-
-;; Mini.basics
-(later (fn []
-    ((. (require :mini.basics) :setup) {
+   ; `mini.basics` contains sensible default configs for a nice "out of the box"
+   ; experience in neovim.
+   ((. (require :mini.basics) :setup) {
         :options {
+            ; Leader key and other common neovim configs are set here
+            ; https://github.com/echasnovski/mini.basics/main/lua/mini/basics.lua#L431-L480
             :basic true
+
+            ; Slight transparency for floating windows and other UI tweaks
             :extra_ui true
+
+            ; Borders between nvim windows (aka panes), not floating.
             :win_borders "bold"
         }
         :mappings {
@@ -109,14 +96,24 @@
             :windows true
         }
         :autocommands {
-            :basic true
-            :relnum_in_visual_mode true
+            :basic true ; briefly highlight yanked text after yanking
+            :relnum_in_visual_mode false ; show relative numbers in visual mode
         }
     })))
 
 
-;; Themes / colour scheme
-;; Load our main theme "now"
+; Notifications
+; Load this `now` so that other errors in config will be shown with mini.notify.
+(now (fn []
+   (let [mini-notify (require :mini.notify)]
+      ; Don't show lsp progress in mini.notify, we'll use Fidget later
+      (mini-notify.setup { :lsp_progress { :enable false }})
+      ; Override `vim.notify` to send all notifications to Mini
+      (set vim.notify (mini-notify.make_notify)))))
+
+
+; Themes / colour scheme
+; Load our main theme "now"
 (now (fn []
    (add { :source "rebelot/kanagawa.nvim" })
 
@@ -136,16 +133,17 @@
 (later (fn [] ((. (require :mini.ai)          :setup)))) ; Better around/inside text objects
 (later (fn [] ((. (require :mini.bracketed)   :setup)))) ; Movement using ][
 (later (fn [] ((. (require :mini.bufremove)   :setup)))) ; Remove buffers after a while
-(later (fn [] ((. (require :mini.colors)      :setup)))) ;
 (later (fn [] ((. (require :mini.comment)     :setup)))) ;
 (later (fn [] ((. (require :mini.icons)       :setup)))) ; Various icons
 (later (fn [] ((. (require :mini.fuzzy)       :setup)))) ; Fuzzy search
 (later (fn [] ((. (require :mini.misc)        :setup)))) ; Miscellanous configuration
 (later (fn [] ((. (require :mini.surround)    :setup)))) ; vim-surround alternative
-(later (fn [] ((. (require :mini.trailspace)  :setup)))) ; Trailing spaces
 (later (fn [] ((. (require :mini.extra)       :setup)))) ; Extras
 (later (fn [] ((. (require :mini.visits)      :setup)))) ; Frecency tracking
 (later (fn [] ((. (require :mini.diff)        :setup)))) ; Diff viewer
+(later (fn []
+   (set vim.g.minitrailspace_disable true)
+   ((. (require :mini.trailspace)  :setup))))
 
 
 ; Picker (alternative to Telescope)
@@ -153,15 +151,6 @@
    (pick.setup)
    (set vim.ui.select pick.ui_select)
    )))
-
-
-; Notifications
-(later (fn []
-   (let [mini-notify (require :mini.notify)]
-      ; Don't show lsp progress in mini.notify, we'll use Fidget later
-      (mini-notify.setup { :lsp_progress { :enable false }})
-      ; Override `vim.notify` to send all notifications to Mini
-      (set vim.notify (mini-notify.make_notify)))))
 
 
 ; Fidget notifier for lsp_progress messages
@@ -172,20 +161,21 @@
 
 
 ; mini-move - Move selections around
-(later (fn [] (let [move (require :mini.move)]
-   move.setup {
-      :mappings {
-         :left   "<S-left>"
-         :right  "<S-right>"
-         :down   "<S-down>"
-         :up     "<S-up>"
+(later (fn []
+   (let [move (require :mini.move)]
+      move.setup {
+         :mappings {
+            :left   "<S-left>"
+            :right  "<S-right>"
+            :down   "<S-down>"
+            :up     "<S-up>"
 
-         :line_left   "<S-left>"
-         :line_right  "<S-right>"
-         :line_down   "<S-down>"
-         :line_up     "<S-up>"
-      }
-   })))
+            :line_left   "<S-left>"
+            :line_right  "<S-right>"
+            :line_down   "<S-down>"
+            :line_up     "<S-up>"
+         }
+      })))
 
 
 ;; Tree-sitter
@@ -224,16 +214,13 @@
    ])
    (now (fn []
       (local nts (require :nvim-treesitter.configs))
-      (nts.setup {
-               :ensure_installed ts-parsers
-               :highlight { :enable true }
-               })))))
+      (nts.setup { :ensure_installed ts-parsers
+                   :highlight { :enable true }})))))
 
 
 (later (fn [] (let [hi (require :mini.hipatterns)]
-   (hi.setup {
-      :hex_color (hi.gen_highlighter.hex_color)
-      }))))
+   (hi.setup { :hex_color (hi.gen_highlighter.hex_color) }))))
+
 
 (now (fn []
    (let [is (require :mini.indentscope)]
@@ -469,7 +456,7 @@
 
 
 ;; flash.nvim - jump to anywhere
-(later (fn [] 
+(later (fn []
    (add { :source "folke/flash.nvim" })
    (let [map vim.keymap.set 
          flash (require :flash)]
@@ -589,3 +576,7 @@
 
    ;; I'm not sure what this does?
    (map "n" "<leader>fr" (fn [] (let [ex (require :mini.extra)] (ex.pickers.visit_paths))) { :desc "Visit paths" })))
+
+
+;; nfnl - this converts Fennel to Lua when saving this file.
+(later (fn [] (add { :source "https://github.com/Olical/nfnl" })))
