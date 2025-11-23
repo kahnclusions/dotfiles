@@ -1,0 +1,12 @@
+tap "yt-dlp/taps"
+
+cask_args no_quarantine: true, appdir: "~/Applications"
+
+cask "steam"
+cask "resilio-sync"
+cask "eloston-chromium"
+cask "commander-one"
+cask "qbittorrent"
+cask "protonvpn"
+
+brew "yt-dlp"
