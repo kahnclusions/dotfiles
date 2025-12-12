@@ -36,13 +36,13 @@ alias dots="cd $DOTFILES"
 # set -gx PATH "$PNPM_HOME" $PATH
 # pnpm end
 
-function update_theme --on-variable macOS_Theme
-    if [ "$macOS_Theme" = "dark" ]
-        source "$HOME/.config/fish/themes/Kanagawa_Wave.fish"
-    else if [ "$macOS_Theme" = "light" ]
-        source "$HOME/.config/fish/themes/Kanagawa_Lotus.fish"
-    end
-end
+# function update_theme --on-variable macOS_Theme
+#     if [ "$macOS_Theme" = "dark" ]
+#         source "$HOME/.config/fish/themes/Kanagawa_Wave.fish"
+#     else if [ "$macOS_Theme" = "light" ]
+#         source "$HOME/.config/fish/themes/Kanagawa_Lotus.fish"
+#     end
+# end
 
 # set -Ux FZF_DEFAULT_OPTS "$FZF_DEFAULT_OPTS \
 #     --color=fg:#c0caf5,bg:#24283b,hl:#ff9e64 \

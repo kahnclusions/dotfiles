@@ -115,17 +115,33 @@
       (set vim.notify (mini-notify.make_notify)))))
 
 
+
 ; Themes / colour scheme
 ; Load our main theme "now"
 (now (fn []
+   (add { :source "https://github.com/uhs-robert/oasis.nvim" })
+
+(local uid (. (or vim.uv vim.loop) :getuid))
+(local is-root (= uid 0))
+(local is-remote (or (not (= vim.env.SSH_CONNECTION nil)) (not (= vim.env.SSH_TTY nil))))
+(local is-sudoedit (and (not is-root) (= vim.env.SUDOEDIT "1" )))
+
+(fn pick-colorscheme [] 
+   (let [is-elevated (or is-root is-sudoedit)] 
+     (if is-remote 
+         (if is-elevated "oasis-abyss" "oasis-mirage") 
+         (if is-elevated "oasis-sol" "oasis-lagoon")))
+  )
+;                                          -- This requires your shell's config to export a flag like: SUDO_EDITOR="env SUDOEDIT=1 /usr/bin/nvim"
+
+
    ; (add { :source "rebelot/kanagawa.nvim" })
    ; (add { :source "folke/tokyonight.nvim" })
    ; (add { :source "webhooked/kanso.nvim" })
    ; (add { :source "ntk148v/komau.vim" })
    ; (add { :source "rktjmp/lush.nvim" })
    ; (add { :source "zenbones-theme/zenbones.nvim" })
-   (add { :source "rose-pine/neovim" :as "rose-pine" })
-
+   ; (add { :source "rose-pine/neovim" :as "rose-pine" })
 ;    (local kanagawa (require :kanagawa))
 ;    (kanagawa.setup {
 ;       :overrides (lambda [colors] {
@@ -144,7 +160,14 @@
 ;          }
 ;       })
 ;    })
-   (vim.cmd "colorscheme rose-pine")
+   (local oasis (require :oasis))
+   (oasis.setup {
+      :light_style "lagoon"
+      :dark_style "lagoon"
+      :light_intensity 2
+   })
+   (vim.cmd.colorscheme (pick-colorscheme))
+
    (add "f-person/auto-dark-mode.nvim")
    ((. (require :auto-dark-mode) :setup) {:update_interval 2000})))
 
