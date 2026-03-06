@@ -1,6 +1,8 @@
 
 #tabbrowser-tabbox {
   border-radius: var(--border-radius-large) !important;
+  overflow: hidden;
+  box-shadow: 0px 0px 10px -6px black;
   margin-right: var(--space-small) !important;
   margin-bottom: var(--space-small) !important;
 }

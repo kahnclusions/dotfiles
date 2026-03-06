@@ -34,7 +34,7 @@
 /* } */
 
 #tabbrowser-tabbox {
-  border-radius: var(--border-radius-medium) !important;
+  border-radius: var(--border-radius-large) !important;
   margin-right: var(--space-small) !important;
   margin-bottom: var(--space-small) !important;
 }

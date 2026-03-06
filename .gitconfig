@@ -3,7 +3,6 @@
 	name = toph
 	signingkey = /Users/ck/.ssh/id_ed25519.pub
 [pull]
-	rebase = false
 [init]
 	defaultBranch = main
 [push]

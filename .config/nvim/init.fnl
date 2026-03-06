@@ -61,6 +61,8 @@
    (set vim.o.autoindent true)
    (set vim.o.expandtab true)
 
+   (set vim.o.cmdheight 0)
+
    ; Minimum number of screen lines to keep above and below the cursor.
    (set vim.o.scrolloff 10)
 
@@ -115,61 +117,39 @@
       (set vim.notify (mini-notify.make_notify)))))
 
 
-
 ; Themes / colour scheme
-; Load our main theme "now"
+; Load our main theme "now".
 (now (fn []
-   (add { :source "https://github.com/uhs-robert/oasis.nvim" })
+   (add { :source "uhs-robert/oasis.nvim" })
+   (add { :source "webhooked/kanso.nvim" })
 
-(local uid (. (or vim.uv vim.loop) :getuid))
-(local is-root (= uid 0))
-(local is-remote (or (not (= vim.env.SSH_CONNECTION nil)) (not (= vim.env.SSH_TTY nil))))
-(local is-sudoedit (and (not is-root) (= vim.env.SUDOEDIT "1" )))
-
-(fn pick-colorscheme [] 
-   (let [is-elevated (or is-root is-sudoedit)] 
-     (if is-remote 
-         (if is-elevated "oasis-abyss" "oasis-mirage") 
-         (if is-elevated "oasis-sol" "oasis-lagoon")))
-  )
-;                                          -- This requires your shell's config to export a flag like: SUDO_EDITOR="env SUDOEDIT=1 /usr/bin/nvim"
-
-
-   ; (add { :source "rebelot/kanagawa.nvim" })
-   ; (add { :source "folke/tokyonight.nvim" })
-   ; (add { :source "webhooked/kanso.nvim" })
-   ; (add { :source "ntk148v/komau.vim" })
-   ; (add { :source "rktjmp/lush.nvim" })
-   ; (add { :source "zenbones-theme/zenbones.nvim" })
-   ; (add { :source "rose-pine/neovim" :as "rose-pine" })
-;    (local kanagawa (require :kanagawa))
-;    (kanagawa.setup {
-;       :overrides (lambda [colors] {
-;          :FlashLabel { :fg colors.theme.ui.bg :bg colors.theme.vcs.added }
-;          :SnacksPickerList {
-; :fg colors.theme.ui.fg :bg colors.theme.ui.bg
-;          }
-;          :SnacksPickerInput {
-; :fg colors.theme.ui.fg :bg colors.theme.ui.bg
-;          }
-;          :SnacksPickerTree {
-; :fg colors.theme.ui.fg :bg colors.theme.ui.bg
-;          }
-;          :SnacksPickerBorder {
-; :fg colors.theme.ui.fg :bg colors.theme.ui.bg
-;          }
-;       })
-;    })
    (local oasis (require :oasis))
-   (oasis.setup {
-      :light_style "lagoon"
-      :dark_style "lagoon"
-      :light_intensity 2
-   })
-   (vim.cmd.colorscheme (pick-colorscheme))
+   (oasis.setup { :light_intensity 2 })
+   (vim.cmd.colorscheme "oasis-lagoon")
 
    (add "f-person/auto-dark-mode.nvim")
    ((. (require :auto-dark-mode) :setup) {:update_interval 2000})))
+
+
+; Load non-main themes "later".
+(later (fn [] 
+   (add { :source "rebelot/kanagawa.nvim" })
+   (add { :source "folke/tokyonight.nvim" })
+   (add { :source "ellisonleao/gruvbox.nvim" })
+   (add { :source "zenbones-theme/zenbones.nvim" :depends ["rktjmp/lush.nvim"] })
+   (add { :source "rose-pine/neovim" :as "rose-pine" })
+   (add { :source "uhs-robert/oasis.nvim" })
+
+
+   (local kanagawa (require :kanagawa))
+   (kanagawa.setup {
+      :overrides (lambda [colors] {
+         :FlashLabel { :fg colors.theme.ui.bg :bg colors.theme.vcs.added }
+         :SnacksPickerList { :fg colors.theme.ui.fg :bg colors.theme.ui.bg }
+         :SnacksPickerInput { :fg colors.theme.ui.fg :bg colors.theme.ui.bg }
+         :SnacksPickerTree { :fg colors.theme.ui.fg :bg colors.theme.ui.bg }
+         :SnacksPickerBorder { :fg colors.theme.ui.fg :bg colors.theme.ui.bg }
+      })})))
 
 
 ;; Mini.nvim plugins
@@ -264,6 +244,20 @@
       "yaml"
    ])
    (now (fn []
+      (vim.filetype.add {
+         :extension { :wile "wile" :wl "wile" }
+      })
+      (vim.treesitter.language.register "wile" ["wl" "wile"])
+            (local nts-parsers (require :nvim-treesitter.parsers))
+            (local parser-config (nts-parsers.get_parser_configs))
+            (set parser-config.wile {
+               :install_info {
+                  :url "~/dev/wile-lang/tree-sitter-wile"
+                  :files [ "src/parser.c" ]
+               }
+               :filetype  "wile" ; -- if filetype does not agrees with parser name
+               :used_by ["wl" "wile"] ; -- additional filetypes that use this parser
+            })
       (local nts (require :nvim-treesitter.configs))
       (nts.setup { :ensure_installed ts-parsers
                    :highlight { :enable true }})))))
@@ -356,6 +350,7 @@
          :javascript { 1 "prettierd" 2 "prettier" :stop_after_first true }
          :typescript { 1 "prettierd" 2 "prettier" :stop_after_first true }
          :typescriptreact { 1 "prettierd" 2 "prettier" :stop_after_first true }
+         :swift [ "swiftformat" ]
       }}))))
 
 
@@ -366,6 +361,7 @@
          :typescriptreact ["eslint_d"]
          :typescript ["eslint_d"]
          :javascript ["eslint_d"]
+         :swift ["swiftlint"]
       }))
 
    (vim.api.nvim_create_autocmd [ "BufWritePost" ] {
@@ -575,6 +571,13 @@
    (marks.setup)
    ))
 
+
+(later (fn []
+   (add { :source "https://github.com/tpope/vim-fugitive" })
+   (add { :source "https://github.com/tpope/vim-rhubarb" })
+   ))
+
+
 (later (fn []
    (add { :source "https://github.com/folke/snacks.nvim" })
    (local snacks (require :snacks))
@@ -582,9 +585,35 @@
    (snacks.setup {
    :picker {
       :sources {
-         :explorer { :layout { :layout { :width 25 } } }
-         :grep { :layout { :layout { :width 0.7 :max_width 120 } } }
-         :buffers { :layout { :layout { :width 0.35 :min_width 60 } } }
+         :explorer { :layout { :layout { :width 30 } } }
+         :grep { :layout { :layout { :width 0.7 } } }
+         :buffers { :layout { :layout { :width 0.5 :min_width 60 } } }
+         :git_branches { 
+            :layout { 
+               :preview "preview" 
+               :layout {
+                  :box  "vertical"
+                  :backdrop  false
+                  :width  0.99
+                  :height  0.4
+                  :max_height 30
+                  :min_width 60 
+                  :position "float"
+                  :anchor "NW"
+                  :row -1
+                  :col 0
+                  :border true
+                  :title  " {title} {live} {flags}"
+                  :title_pos  "center"
+                  1 { :win  "input" :height  1 :border "none" }
+                  2 {
+                    :box  "horizontal"
+                    1 { :win  "list" :width 0 }
+                    2 { :win  "preview" :title  "{preview}" :title_pos "left" :width 72 :border  true }
+                  }
+               }
+            } 
+         }
          :lines { 
             :win { :preview { :number false :relativenumber false } }
             :layout { 
@@ -599,7 +628,7 @@
                   2 {
                     :box  "horizontal"
                     1 { :win  "list" :width 0 }
-                    2 { :win  "preview" :title  "{preview}" :title_pos "left" :width 0.8 :border  true }
+                    2 { :win  "preview" :title  "{preview}" :title_pos "left" :width 0.8 :border  true }                                   
                   }
                } 
             } 
@@ -614,14 +643,14 @@
             :layout {
                :box  "vertical"
                :backdrop  false
-               :width  0.45
+               :width  0.5
                :height  0.4
                :max_height 30
                :min_width 60 
-               :max_width 80
+               :max_width 140
                :position "float"
                :anchor "NW"
-               :row -2
+               :row -1
                :col 0
                :border true
                :title  " {title} {live} {flags}"
@@ -637,9 +666,23 @@
       }  
       }
    })
-   (map "n" "<leader>fe" (fn [] (_G.Snacks.picker.explorer)) { :desc "Files" })
+   (map "n" "<leader>fE" (fn [] (_G.Snacks.picker.explorer)) { :desc "Files" })
    (map "n" "<leader>fF" (fn [] (let [SmartPick (require :SmartPick)] (SmartPick.picker))) { :desc "Files" })
-   (map "n" "<leader>ff" (fn [] ( _G.Snacks.picker.smart)) { :desc "Files" })))
+   (map "n" "<leader>lR" (fn [] (_G.Snacks.picker.lsp_references)) { :desc "References" })
+   (map "n" "<leader>ff" (fn [] (_G.Snacks.picker.smart)) { :desc "Files" })))
+
+
+; (later (fn []
+;    (add { :source "pwntester/octo.nvim" })
+;    (local map vim.keymap.set)
+;    (local octo (require :octo))
+;    (octo.setup {})
+;    (map "n" "<leader>op" "<cmd>Octo pr list<cr>" { :desc "Octo pr list" })
+;    (map "n" "<leader>os" (fn [] 
+;       (let [octo-utils (require :octo.utils)]
+;         (octo-utils.create_base_search_command { :include_current_repo true })
+;         )) { :desc "Octo pr list" })
+;    ))
 
 
 ;; flash.nvim - jump to anywhere
@@ -681,18 +724,52 @@
             }))
       ) { :desc "Show diagnostics at location" }))))
 
-(later (fn [] 
-   (add { :source "https://github.com/patrickpichler/hovercraft.nvim" })
+
+; Hovercraft shows a better LSP hover window.
+(now (fn [] 
+   (add { :source "https://github.com/patrickpichler/hovercraft.nvim" :depends ["nvim-lua/plenary.nvim"] })
    (let [hovercraft (require :hovercraft)
+         hovercraft-lsp (require :hovercraft.provider.lsp)
+         hovercraft-git (require :hovercraft.provider.git)
+         hovercraft-diagnostics (require :hovercraft.provider.diagnostics)
+         hovercraft-github (require :hovercraft.provider.github)
+         hovercraft-man (require :hovercraft.provider.man)
          map vim.keymap.set]
-      (hovercraft.setup)
+      (hovercraft.setup {
+         :providers {
+            :providers [
+               [ "LSP" (hovercraft-lsp.new) ]
+               [ "Blame" (hovercraft-git.Blame.new) ]
+               [ "Diagnostics" (hovercraft-diagnostics.new) ]
+               [ "Man" (hovercraft-man.new) ]
+            ]
+         }
+      })
       (map "n" "K" (fn [] (let [hovercraft (require :hovercraft)] (if (hovercraft.is_visible) 
         (hovercraft.enter_popup)
         (hovercraft.hover)
-      ))) { :desc "Hover" })
+      ))) { :desc "Hover" }))))
 
-   )
-   ))
+(later (fn []
+   (add { :source "https://github.com/serhez/bento.nvim" })
+   (let [bento (require :bento)] 
+     (bento.setup))))
+
+
+(later (fn []
+   (add { :source "https://github.com/stevearc/overseer.nvim" })
+   (let [overseer (require :overseer)
+         map vim.keymap.set]
+      (overseer.setup)
+      (map "n" "<leader>or" (fn [] (let [overseer (require :overseer)] (overseer.run_task { :name "make build" }))) { :desc "Overseer Build" })
+      (map "n" "<leader>or" (fn [] (let [overseer (require :overseer)] (overseer.run_task { :name "make run" }))) { :desc "Overseer Run" })
+      (map "n" "<leader>ot" "<cmd>OverseerToggle<cr>" { :desc "Overseer Toggle" })
+   )))
+
+(later (fn [] 
+   (add { :source "wojciech-kulik/xcodebuild.nvim" :depends ["folke/snacks.nvim" "MunifTanjim/nui.nvim"] })
+   (let [xcb (require :xcodebuild)]
+      (xcb.setup))))
 
 ; (later (fn []
 ;    (add { :source "https://github.com/rest-nvim/rest.nvim" })
@@ -735,7 +812,7 @@
 
    ;; File Explorer
    (map "n" "<leader>f." files-open-current { :desc "Explore files at current" })
-   (map "n" "<leader>fE" (fn [] ((. (require :mini.files) :open) (vim.loop.cwd))) { :desc "Explore files" })
+   (map "n" "<leader>fe" (fn [] ((. (require :mini.files) :open) (vim.loop.cwd))) { :desc "Explore files" })
 
    ; Pick marks (global + local)
    (map "n" "<leader>mm" (fn [] (_G.Snacks.picker.marks)) { :desc "Marks" })
@@ -774,8 +851,24 @@
    ;; Diagnostics
    (map "n" "<leader>dd" (fn [] (vim.diagnostic.open_float)) { :desc "Open diagnostic float" })
 
-   ;; Neogit
+   ;; Git
    (map "n" "<leader>gg" (fn [] (let [neogit (require :neogit)] (neogit.open { :kind "floating" }))) { :desc "Neo(g)it" })
+   (map "n" "<leader>go" "<cmd>GBrowse<cr>" { :desc "Git Browse" })
+   (map "n" "<leader>gd" "<cmd>Gdiffsplit<cr>" { :desc "Git Diff split" })
+   (map "n" "<leader>gm" "<cmd>Gdiffsplit<cr>" { :desc "Git Diff split" })
+   (map "n" "<leader>gm" "<cmd>Git mergetool<cr>" { :desc "Git merge tool" })
+
+   (map "n" "<leader>gp" "<cmd>Git pull<cr>" { :desc "Git pull" })
+   (map "n" "<leader>gP" "<cmd>Git push<cr>" { :desc "Git push" })
+   (map "n" "<leader>gP" "<cmd>Git push<cr>" { :desc "Git push" })
+
+   (map "n" "<leader>gb" (fn [] (_G.Snacks.picker.git_branches)) { :desc "Git branch" })
+
+   (map "n" "<leader>gco" (fn [] 
+      (local user-input (vim.fn.input "Enter branch name: "))
+      (vim.cmd (.. "Git checkout " user-input))
+                                  ) { :desc "Git checkout" })
+
 
    ;; Notifications
    (map "n" "<leader>nc" (fn [] (let [notify (require :mini.notify)] (notify.clear))) { :desc "Notify Clear" })
@@ -787,3 +880,4 @@
 
 ;; nfnl - this converts Fennel to Lua when saving this file.
 (later (fn [] (add { :source "https://github.com/Olical/nfnl" })))
+
