@@ -13,7 +13,7 @@ local function active_mode()
 end
 local function colour_scheme(mode)
   if (mode == "light") then
-    return "Oasis Lagoon Light 2"
+    return "gruvbox-light"
   elseif (mode == "dark") then
     return "Oasis Lagoon Dark"
   else

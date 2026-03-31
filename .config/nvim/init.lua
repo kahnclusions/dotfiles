@@ -44,9 +44,11 @@ now(_3_)
 local function _4_()
   add({source = "uhs-robert/oasis.nvim"})
   add({source = "webhooked/kanso.nvim"})
-  local oasis = require("oasis")
-  oasis.setup({light_intensity = 2})
-  vim.cmd.colorscheme("oasis-lagoon")
+  add({source = "https://github.com/sainnhe/gruvbox-material.git"})
+  vim.cmd.colorscheme("gruvbox-material")
+  vim.g.gruvbox_material_enable_italic = true
+  vim.g.gruvbox_material_foreground = "original"
+  vim.g.gruvbox_material_enable_italic = true
   add("f-person/auto-dark-mode.nvim")
   return require("auto-dark-mode").setup({update_interval = 2000})
 end
@@ -54,14 +56,14 @@ now(_4_)
 local function _5_()
   add({source = "rebelot/kanagawa.nvim"})
   add({source = "folke/tokyonight.nvim"})
-  add({source = "ellisonleao/gruvbox.nvim"})
+  add({source = "https://github.com/sainnhe/gruvbox-material.git"})
   add({source = "zenbones-theme/zenbones.nvim", depends = {"rktjmp/lush.nvim"}})
   add({source = "rose-pine/neovim", as = "rose-pine"})
   add({source = "uhs-robert/oasis.nvim"})
   local kanagawa = require("kanagawa")
   local function _6_(colors)
     if (nil == colors) then
-      _G.error("Missing argument colors on /Users/ck/.config/nvim/init.fnl:146", 2)
+      _G.error("Missing argument colors on /Users/ck/.config/nvim/init.fnl:149", 2)
     else
     end
     return {FlashLabel = {fg = colors.theme.ui.bg, bg = colors.theme.vcs.added}, SnacksPickerList = {fg = colors.theme.ui.fg, bg = colors.theme.ui.bg}, SnacksPickerInput = {fg = colors.theme.ui.fg, bg = colors.theme.ui.bg}, SnacksPickerTree = {fg = colors.theme.ui.fg, bg = colors.theme.ui.bg}, SnacksPickerBorder = {fg = colors.theme.ui.fg, bg = colors.theme.ui.bg}}
@@ -256,7 +258,7 @@ end
 later(_40_)
 local function _42_(diagnostic)
   if (nil == diagnostic) then
-    _G.error("Missing argument diagnostic on /Users/ck/.config/nvim/init.fnl:388", 2)
+    _G.error("Missing argument diagnostic on /Users/ck/.config/nvim/init.fnl:391", 2)
   else
   end
   local diagnostic_message = {[{vim.diagnostic.severity.ERROR}] = diagnostic.message, [{vim.diagnostic.severity.WARN}] = diagnostic.message, [{vim.diagnostic.severity.INFO}] = diagnostic.message, [{vim.diagnostic.severity.HINT}] = diagnostic.message}
@@ -297,11 +299,11 @@ end
 now(_46_)
 local function pick_marks(name, pattern)
   if (nil == pattern) then
-    _G.error("Missing argument pattern on /Users/ck/.config/nvim/init.fnl:462", 2)
+    _G.error("Missing argument pattern on /Users/ck/.config/nvim/init.fnl:465", 2)
   else
   end
   if (nil == name) then
-    _G.error("Missing argument name on /Users/ck/.config/nvim/init.fnl:462", 2)
+    _G.error("Missing argument name on /Users/ck/.config/nvim/init.fnl:465", 2)
   else
   end
   local pick = require("mini.pick")
@@ -435,11 +437,11 @@ local function _64_()
     local flash0 = require("flash")
     local function _73_(matched, state)
       if (nil == state) then
-        _G.error("Missing argument state on /Users/ck/.config/nvim/init.fnl:719", 2)
+        _G.error("Missing argument state on /Users/ck/.config/nvim/init.fnl:722", 2)
       else
       end
       if (nil == matched) then
-        _G.error("Missing argument matched on /Users/ck/.config/nvim/init.fnl:719", 2)
+        _G.error("Missing argument matched on /Users/ck/.config/nvim/init.fnl:722", 2)
       else
       end
       local function _76_()
@@ -506,41 +508,47 @@ local function _84_()
 end
 later(_84_)
 local function _85_()
+  add({source = "attilarepka/header.nvim"})
+  local header = require("header")
+  return header.setup({line_separator = nil, copyright_text = {" Copyright \194\169 2026 Christopher Kahn. All rights reserved.", " This Source Code Form is subject to the terms of the Mozilla Public", " License, v. 2.0. If a copy of the MPL was not distributed with this", " file, You can obtain one at https://mozilla.org/MPL/2.0/."}, date_created = false, date_modified = false, file_name = false, use_block_header = false})
+end
+later(_85_)
+local function _86_()
   local map = vim.keymap.set
   map("n", "<leader>q", "<cmd>qa<cr>", {desc = "Quit"})
   map("n", "<leader>wv", "<C-w>v<cr>", {desc = "Split window vertically"})
   map("n", "<leader>ws", "<C-w>s<cr>", {desc = "Split window horizontally"})
   map("n", "<leader>wc", "<C-w>c<cr>", {desc = "Close window"})
-  local function _86_()
+  local function _87_()
     return _G.Snacks.picker.grep()
   end
-  map("n", "<leader><space>", _86_, {desc = "Find String"})
-  local function _87_()
+  map("n", "<leader><space>", _87_, {desc = "Find String"})
+  local function _88_()
     return _G.Snacks.picker.lines({layout = {preview = "main"}, win = {preview = {wo = {number = false, relativenumber = false}}}})
   end
-  map("n", "<leader>/", _87_, {desc = "Find lines"})
-  local function _88_()
+  map("n", "<leader>/", _88_, {desc = "Find lines"})
+  local function _89_()
     return _G.Snacks.picker.buffers()
   end
-  map("n", "<leader>fb", _88_, {desc = "Find Buffer"})
-  local function _89_()
+  map("n", "<leader>fb", _89_, {desc = "Find Buffer"})
+  local function _90_()
     return _G.Snacks.picker.grep_word()
   end
-  map({"n", "v"}, "<leader>fw", _89_, {desc = "Find current word"})
-  local function _90_()
+  map({"n", "v"}, "<leader>fw", _90_, {desc = "Find current word"})
+  local function _91_()
     return _G.Snacks.picker.recent()
   end
-  map("n", "<leader>fo", _90_, {desc = "Old files"})
-  local function _91_()
+  map("n", "<leader>fo", _91_, {desc = "Old files"})
+  local function _92_()
     return _G.Snacks.picker.resume({})
   end
-  map("n", "<leader>fr", _91_, {desc = "Resume snacking"})
+  map("n", "<leader>fr", _92_, {desc = "Resume snacking"})
   map("n", "<leader>fs", "<cmd>w<cr>", {desc = "Write buffer (save)"})
-  local function _92_()
+  local function _93_()
     local extra = require("mini.extra")
     return extra.pickers.buf_lines({scope = "current"})
   end
-  map("n", ",", _92_, {desc = "Pick lines in current file"})
+  map("n", ",", _93_, {desc = "Pick lines in current file"})
   local function files_open_current()
     local buffer_name = vim.api.nvim_buf_get_name(0)
     local mini_files = require("mini.files")
@@ -551,114 +559,114 @@ local function _85_()
     end
   end
   map("n", "<leader>f.", files_open_current, {desc = "Explore files at current"})
-  local function _94_()
+  local function _95_()
     return require("mini.files").open(vim.loop.cwd())
   end
-  map("n", "<leader>fe", _94_, {desc = "Explore files"})
-  local function _95_()
+  map("n", "<leader>fe", _95_, {desc = "Explore files"})
+  local function _96_()
     return _G.Snacks.picker.marks()
   end
-  map("n", "<leader>mm", _95_, {desc = "Marks"})
-  local function _96_()
+  map("n", "<leader>mm", _96_, {desc = "Marks"})
+  local function _97_()
     return pick_marks("Global marks", "[A-Z]")
   end
-  map("n", "<leader>mg", _96_, {desc = "Global marks"})
-  local function _97_()
+  map("n", "<leader>mg", _97_, {desc = "Global marks"})
+  local function _98_()
     return pick_marks("Local marks", "[a-z]")
   end
-  map("n", "<leader>ml", _97_, {desc = "Local user marks"})
-  local function _98_()
-    return pick_marks("Marks", ".")
-  end
-  map("n", "<leader>mM", _98_, {desc = "All marks"})
+  map("n", "<leader>ml", _98_, {desc = "Local user marks"})
   local function _99_()
     return pick_marks("Marks", ".")
   end
-  map("n", "<leader>ma", _99_, {desc = "All marks"})
+  map("n", "<leader>mM", _99_, {desc = "All marks"})
   local function _100_()
+    return pick_marks("Marks", ".")
+  end
+  map("n", "<leader>ma", _100_, {desc = "All marks"})
+  local function _101_()
     return vim.lsp.buf.definition()
   end
-  map("n", "<leader>ld", _100_, {desc = "Go to definition"})
-  local function _101_()
+  map("n", "<leader>ld", _101_, {desc = "Go to definition"})
+  local function _102_()
     return vim.lsp.buf.rename()
   end
-  map("n", "<leader>lr", _101_, {desc = "Rename"})
-  local function _102_()
+  map("n", "<leader>lr", _102_, {desc = "Rename"})
+  local function _103_()
     return vim.lsp.buf.code_action()
   end
-  map("n", "<leader>la", _102_, {desc = "Code actions"})
-  local function _103_()
+  map("n", "<leader>la", _103_, {desc = "Code actions"})
+  local function _104_()
     local extra = require("mini.extra")
     return extra.pickers.diagnostic({scope = "current"})
   end
-  map("n", "<leader>le", _103_, {desc = "LSP Errors"})
-  local function _104_()
+  map("n", "<leader>le", _104_, {desc = "LSP Errors"})
+  local function _105_()
     return vim.lsp.buf.definition()
   end
-  map("n", "gd", _104_, {desc = "Go to definition"})
-  local function _105_()
+  map("n", "gd", _105_, {desc = "Go to definition"})
+  local function _106_()
     return vim.lsp.buf.signature_help()
   end
-  map("n", "<leader>lh", _105_, {desc = "Signature help"})
-  local function _106_()
+  map("n", "<leader>lh", _106_, {desc = "Signature help"})
+  local function _107_()
     local ex = require("mini.extra")
     return ex.pickers.lsp({scope = "references"})
   end
-  map("n", "grr", _106_, {desc = "Go to references"})
-  local function _107_()
+  map("n", "grr", _107_, {desc = "Go to references"})
+  local function _108_()
     local ex = require("mini.extra")
     return ex.pickers.lsp({scope = "implementation"})
   end
-  map("n", "gri", _107_, {desc = "Go to implementations"})
-  local function _108_()
+  map("n", "gri", _108_, {desc = "Go to implementations"})
+  local function _109_()
     local move = require("mini.move")
     return move.move_line("up")
   end
-  map("n", "sk", _108_, {desc = "Move line up"})
-  local function _109_()
+  map("n", "sk", _109_, {desc = "Move line up"})
+  local function _110_()
     local move = require("mini.move")
     return move.move_line("down")
   end
-  map("n", "sj", _109_, {desc = "Move line down"})
-  local function _110_()
+  map("n", "sj", _110_, {desc = "Move line down"})
+  local function _111_()
     local move = require("mini.move")
     return move.move_line("left")
   end
-  map("n", "sh", _110_, {desc = "Move line up"})
-  local function _111_()
+  map("n", "sh", _111_, {desc = "Move line up"})
+  local function _112_()
     local move = require("mini.move")
     return move.move_line("right")
   end
-  map("n", "sl", _111_, {desc = "Move line down"})
-  local function _112_()
+  map("n", "sl", _112_, {desc = "Move line down"})
+  local function _113_()
     local move = require("mini.move")
     return move.move_selection("up")
   end
-  map("v", "sk", _112_, {desc = "Move selection up"})
-  local function _113_()
+  map("v", "sk", _113_, {desc = "Move selection up"})
+  local function _114_()
     local move = require("mini.move")
     return move.move_selection("down")
   end
-  map("v", "sj", _113_, {desc = "Move selection down"})
-  local function _114_()
+  map("v", "sj", _114_, {desc = "Move selection down"})
+  local function _115_()
     local move = require("mini.move")
     return move.move_selection("left")
   end
-  map("v", "sh", _114_, {desc = "Move selection left"})
-  local function _115_()
+  map("v", "sh", _115_, {desc = "Move selection left"})
+  local function _116_()
     local move = require("mini.move")
     return move.move_selection("right")
   end
-  map("v", "sl", _115_, {desc = "Move selection left"})
-  local function _116_()
+  map("v", "sl", _116_, {desc = "Move selection left"})
+  local function _117_()
     return vim.diagnostic.open_float()
   end
-  map("n", "<leader>dd", _116_, {desc = "Open diagnostic float"})
-  local function _117_()
+  map("n", "<leader>dd", _117_, {desc = "Open diagnostic float"})
+  local function _118_()
     local neogit = require("neogit")
     return neogit.open({kind = "floating"})
   end
-  map("n", "<leader>gg", _117_, {desc = "Neo(g)it"})
+  map("n", "<leader>gg", _118_, {desc = "Neo(g)it"})
   map("n", "<leader>go", "<cmd>GBrowse<cr>", {desc = "Git Browse"})
   map("n", "<leader>gd", "<cmd>Gdiffsplit<cr>", {desc = "Git Diff split"})
   map("n", "<leader>gm", "<cmd>Gdiffsplit<cr>", {desc = "Git Diff split"})
@@ -666,28 +674,28 @@ local function _85_()
   map("n", "<leader>gp", "<cmd>Git pull<cr>", {desc = "Git pull"})
   map("n", "<leader>gP", "<cmd>Git push<cr>", {desc = "Git push"})
   map("n", "<leader>gP", "<cmd>Git push<cr>", {desc = "Git push"})
-  local function _118_()
+  local function _119_()
     return _G.Snacks.picker.git_branches()
   end
-  map("n", "<leader>gb", _118_, {desc = "Git branch"})
-  local function _119_()
+  map("n", "<leader>gb", _119_, {desc = "Git branch"})
+  local function _120_()
     local user_input = vim.fn.input("Enter branch name: ")
     return vim.cmd(("Git checkout " .. user_input))
   end
-  map("n", "<leader>gco", _119_, {desc = "Git checkout"})
-  local function _120_()
+  map("n", "<leader>gco", _120_, {desc = "Git checkout"})
+  local function _121_()
     local notify = require("mini.notify")
     return notify.clear()
   end
-  map("n", "<leader>nc", _120_, {desc = "Notify Clear"})
-  local function _121_()
+  map("n", "<leader>nc", _121_, {desc = "Notify Clear"})
+  local function _122_()
     local notify = require("mini.notify")
     return notify.show_history()
   end
-  return map("n", "<leader>nh", _121_, {desc = "Notify History"})
+  return map("n", "<leader>nh", _122_, {desc = "Notify History"})
 end
-later(_85_)
-local function _122_()
+later(_86_)
+local function _123_()
   return add({source = "https://github.com/Olical/nfnl"})
 end
-return later(_122_)
+return later(_123_)

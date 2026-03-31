@@ -122,10 +122,13 @@
 (now (fn []
    (add { :source "uhs-robert/oasis.nvim" })
    (add { :source "webhooked/kanso.nvim" })
+   (add { :source "https://github.com/sainnhe/gruvbox-material.git" })
 
-   (local oasis (require :oasis))
-   (oasis.setup { :light_intensity 2 })
-   (vim.cmd.colorscheme "oasis-lagoon")
+   ; (local gruvbox (require :gruvbox))
+   (vim.cmd.colorscheme "gruvbox-material")
+   (set vim.g.gruvbox_material_enable_italic true)
+   (set vim.g.gruvbox_material_foreground "original")
+   (set vim.g.gruvbox_material_enable_italic true)
 
    (add "f-person/auto-dark-mode.nvim")
    ((. (require :auto-dark-mode) :setup) {:update_interval 2000})))
@@ -135,7 +138,7 @@
 (later (fn [] 
    (add { :source "rebelot/kanagawa.nvim" })
    (add { :source "folke/tokyonight.nvim" })
-   (add { :source "ellisonleao/gruvbox.nvim" })
+   (add { :source "https://github.com/sainnhe/gruvbox-material.git" })
    (add { :source "zenbones-theme/zenbones.nvim" :depends ["rktjmp/lush.nvim"] })
    (add { :source "rose-pine/neovim" :as "rose-pine" })
    (add { :source "uhs-robert/oasis.nvim" })
@@ -770,6 +773,22 @@
    (add { :source "wojciech-kulik/xcodebuild.nvim" :depends ["folke/snacks.nvim" "MunifTanjim/nui.nvim"] })
    (let [xcb (require :xcodebuild)]
       (xcb.setup))))
+
+(later (fn []
+   (add { :source "attilarepka/header.nvim" })
+   (let [header (require :header)] 
+     (header.setup { 
+         :file_name false
+         :date_created false
+         :date_modified false
+         :use_block_header false
+         :line_separator nil
+         :copyright_text [
+            " Copyright © 2026 Christopher Kahn. All rights reserved."
+            " This Source Code Form is subject to the terms of the Mozilla Public"
+            " License, v. 2.0. If a copy of the MPL was not distributed with this"
+            " file, You can obtain one at https://mozilla.org/MPL/2.0/."
+         ] }))))
 
 ; (later (fn []
 ;    (add { :source "https://github.com/rest-nvim/rest.nvim" })

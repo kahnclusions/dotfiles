@@ -11,7 +11,7 @@
 (fn colour-scheme [mode] 
   "Get colour scheme for active appearance"
   (case mode
-      :light "Oasis Lagoon Light 2"
+      :light "gruvbox-light"
       :dark "Oasis Lagoon Dark"))
 
 (local config {
